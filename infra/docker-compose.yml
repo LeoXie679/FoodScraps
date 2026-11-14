@@ -69,6 +69,30 @@ services:
       web-build:
         condition: service_completed_successfully
 
+  # Every 30 minutes: scrape club posts, then run Person B's pipeline.
+  scrape-cron:
+    image: curlimages/curl:8.10.1
+    env_file:
+      - ../.env
+    environment:
+      SCRAPE_CRON_URL: http://api:8000/admin/scrape-now
+      SCRAPE_CRON_INTERVAL_SEC: ${SCRAPE_CRON_INTERVAL_SEC:-1800}
+    volumes:
+      - ./scrape_cron.sh:/scrape_cron.sh:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "scrape-cron up; first run in 90s, then every $${SCRAPE_CRON_INTERVAL_SEC:-1800}s"
+        sleep 90
+        while true; do
+          /bin/sh /scrape_cron.sh || echo "scrape-cron tick failed"
+          sleep "$${SCRAPE_CRON_INTERVAL_SEC:-1800}"
+        done
+
 volumes:
   web_node_modules:
   web_dist:
