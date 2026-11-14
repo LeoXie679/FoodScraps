@@ -139,6 +139,12 @@ def process_post(conn, s3, post):
             raise ValueError("Event has no title")
 
         building = match_building(conn, result.location)
+        logger.info(
+            "Post %s: AI location=%r, matched building=%r",
+            post_id,
+            result.location,
+            building["name"] if building else None,
+        )
 
         location_name = (
             building["name"]
