@@ -211,7 +211,8 @@ export default function App() {
     for (const group of groups.values()) {
       group.forEach((item, i) => {
         const angle = (2 * Math.PI * i) / group.length
-        const r = group.length > 1 ? 0.00035 : 0
+        // ~8–12m spread — enough to click separately, still looks like one building
+        const r = group.length > 1 ? 0.00008 : 0
         out.push({
           ...item,
           mapLat: Number(item.lat) + r * Math.cos(angle),
