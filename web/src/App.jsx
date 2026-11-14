@@ -199,7 +199,8 @@ export default function App() {
   )
 
   useEffect(() => {
-    if (USE_MOCK || !API_BASE) return
+    // API_BASE may be '' (same-origin behind Caddy) — that is valid.
+    if (USE_MOCK) return
     let cancelled = false
     async function load() {
       try {
