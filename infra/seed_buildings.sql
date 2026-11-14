@@ -51,7 +51,7 @@ INSERT INTO buildings (name, aliases, lat, lng) VALUES
 ('Galbraith Hall', ARRAY['Galbraith','GH'], 32.8749, -117.2408),
 ('Ledden Auditorium', ARRAY['Ledden'], 32.8778, -117.2415),
 ('Cognitive Science Building', ARRAY['CSB','Cognitive Science'], 32.8814, -117.2355),
-('Malk Hall', ARRAY['Malk','Malk Center','Brian C. Malk Hall'], 32.8799, -117.2346),
+('Malk Hall', ARRAY['Malk','Malk Center','Brian C. Malk Hall'], 32.883006, -117.240391),
 ('Mandeville Auditorium', ARRAY['Mandeville','MANDE','Mandeville Center'], 32.8782, -117.2390),
 ('Mandeville Center', ARRAY['Mandeville Center Lobby'], 32.8783, -117.2391),
 ('Jeannie Auditorium', ARRAY['The Jeannie','Jeannie'], 32.8830, -117.2415),
