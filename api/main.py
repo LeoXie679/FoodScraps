@@ -7,7 +7,7 @@ import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Optional
 
 import httpx
 from dotenv import load_dotenv
@@ -22,6 +22,9 @@ load_dotenv(REPO / ".env")
 
 S3_ENDPOINT = os.getenv("S3_ENDPOINT", "").rstrip("/")
 S3_BUCKET = os.getenv("S3_BUCKET", "radar-raw")
+S3_ACCESS_KEY = os.getenv("S3_ACCESS_KEY", "")
+S3_SECRET_KEY = os.getenv("S3_SECRET_KEY", "")
+S3_REGION = os.getenv("S3_REGION", "us-east-1")
 ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "changeme")
 PIPELINE_URL = os.getenv("PIPELINE_URL", "").strip()
 PIPELINE_TOKEN = os.getenv("PIPELINE_TOKEN", "").strip()
@@ -36,12 +39,44 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+_s3 = None
 
-def image_public_url(image_key: str | None) -> str | None:
+
+def _s3_client():
+    global _s3
+    if _s3 is not None:
+        return _s3
+    if not (S3_ENDPOINT and S3_ACCESS_KEY and S3_SECRET_KEY):
+        return None
+    import boto3
+    from botocore.client import Config
+
+    _s3 = boto3.client(
+        "s3",
+        endpoint_url=S3_ENDPOINT,
+        aws_access_key_id=S3_ACCESS_KEY,
+        aws_secret_access_key=S3_SECRET_KEY,
+        region_name=S3_REGION,
+        config=Config(signature_version="s3v4"),
+    )
+    return _s3
+
+
+def image_public_url(image_key):
     if not image_key:
         return None
     if image_key.startswith("http://") or image_key.startswith("https://"):
         return image_key
+    client = _s3_client()
+    if client:
+        try:
+            return client.generate_presigned_url(
+                "get_object",
+                Params={"Bucket": S3_BUCKET, "Key": image_key},
+                ExpiresIn=3600 * 6,
+            )
+        except Exception:
+            pass
     host = S3_ENDPOINT.replace("https://", "").replace("http://", "")
     if not host:
         return None
@@ -51,11 +86,11 @@ def image_public_url(image_key: str | None) -> str | None:
 class LeftoverIn(BaseModel):
     location_name: str = Field(min_length=1)
     description: str = Field(min_length=1)
-    posted_by: str | None = None
+    posted_by: Optional[str] = None
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
+def health():
     try:
         with get_conn() as conn:
             with conn.cursor() as cur:
@@ -68,12 +103,12 @@ def health() -> dict[str, str]:
 
 @app.get("/events")
 def list_events(
-    from_: str | None = Query(None, alias="from"),
-    to: str | None = None,
-    dietary: str | None = None,
-) -> list[dict[str, Any]]:
-    clauses: list[str] = ["e.has_food = TRUE"]
-    params: list[Any] = []
+    from_: Optional[str] = Query(None, alias="from"),
+    to: Optional[str] = None,
+    dietary: Optional[str] = None,
+):
+    clauses = ["e.has_food = TRUE"]
+    params = []
 
     if from_:
         clauses.append("e.start_time >= %s")
@@ -115,7 +150,7 @@ def list_events(
 
 
 @app.get("/events/{event_id}")
-def get_event(event_id: int) -> dict[str, Any]:
+def get_event(event_id: int):
     sql = """
         SELECT e.id, e.title, e.org, e.start_time, e.end_time, e.location_name,
                e.lat, e.lng, e.has_food, e.food_desc, e.dietary, e.confidence,
@@ -139,7 +174,7 @@ def get_event(event_id: int) -> dict[str, Any]:
     return item
 
 
-def _resolve_building(conn, location_name: str) -> tuple[float | None, float | None]:
+def _resolve_building(conn, location_name):
     name = location_name.strip()
     with conn.cursor() as cur:
         cur.execute(
@@ -175,7 +210,7 @@ def _resolve_building(conn, location_name: str) -> tuple[float | None, float | N
 
 
 @app.post("/leftovers")
-def create_leftover(body: LeftoverIn) -> dict[str, Any]:
+def create_leftover(body: LeftoverIn):
     now = datetime.now(timezone.utc)
     expires = now + timedelta(hours=LEFTOVER_TTL_HOURS)
     with get_conn() as conn:
@@ -206,7 +241,7 @@ def create_leftover(body: LeftoverIn) -> dict[str, Any]:
 
 
 @app.get("/leftovers/active")
-def active_leftovers() -> list[dict[str, Any]]:
+def active_leftovers():
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -228,7 +263,7 @@ def active_leftovers() -> list[dict[str, Any]]:
     return out
 
 
-def _check_admin(authorization: str | None, x_admin_token: str | None) -> None:
+def _check_admin(authorization, x_admin_token):
     token = None
     if x_admin_token:
         token = x_admin_token
@@ -240,10 +275,10 @@ def _check_admin(authorization: str | None, x_admin_token: str | None) -> None:
 
 @app.post("/admin/scrape-now")
 def scrape_now(
-    authorization: str | None = Header(None),
-    x_admin_token: str | None = Header(None),
-    limit: int | None = Query(None, ge=1, le=50),
-) -> dict[str, Any]:
+    authorization: Optional[str] = Header(None),
+    x_admin_token: Optional[str] = Header(None),
+    limit: Optional[int] = Query(None, ge=1, le=50),
+):
     """Trigger one scrape run (for the live demo)."""
     _check_admin(authorization, x_admin_token)
     scraper = REPO / "scraper" / "run_scrape.py"
@@ -262,7 +297,7 @@ def scrape_now(
     except subprocess.TimeoutExpired:
         raise HTTPException(504, "scrape timed out") from None
 
-    pipeline: dict[str, Any] | None = None
+    pipeline = None
     if PIPELINE_URL and proc.returncode == 0:
         try:
             headers = {}

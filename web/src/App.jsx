@@ -4,9 +4,9 @@ import 'leaflet/dist/leaflet.css'
 import mockData from './mock-events.json'
 import buildingsData from './buildings.json'
 
-const USE_MOCK = true
-const API_BASE = ''
-// TODO: when USE_MOCK is false, fetch `${API_BASE}/events` and
+const USE_MOCK = false
+const API_BASE = 'http://127.0.0.1:8000'
+// When USE_MOCK is false, fetch `${API_BASE}/events` and
 // `${API_BASE}/leftovers/active` (GET) instead of using mock data.
 
 const UCSD_CENTER = [32.8801, -117.234]
@@ -178,6 +178,7 @@ function PostLeftoversPanel({ onPosted, onCancel }) {
 
 export default function App() {
   const [filter, setFilter] = useState('all')
+  const [events, setEvents] = useState(USE_MOCK ? mockData.events : [])
   const [leftovers, setLeftovers] = useState(
     USE_MOCK ? mockData.leftovers : [],
   )
@@ -187,7 +188,6 @@ export default function App() {
   const [map, setMap] = useState(null)
   const markerRefs = useRef({})
 
-  const events = USE_MOCK ? mockData.events : []
   const now = new Date()
 
   const visibleEvents = events.filter(
@@ -196,6 +196,34 @@ export default function App() {
   const visibleLeftovers = leftovers.filter((lo) =>
     leftoverMatches(lo, filter, now),
   )
+
+  useEffect(() => {
+    if (USE_MOCK || !API_BASE) return
+    let cancelled = false
+    async function load() {
+      try {
+        const [evRes, loRes] = await Promise.all([
+          fetch(`${API_BASE}/events`),
+          fetch(`${API_BASE}/leftovers/active`),
+        ])
+        if (!evRes.ok || !loRes.ok) throw new Error('API fetch failed')
+        const [evData, loData] = await Promise.all([evRes.json(), loRes.json()])
+        if (!cancelled) {
+          setEvents(evData)
+          setLeftovers(loData)
+        }
+      } catch (err) {
+        console.error(err)
+        if (!cancelled) setToast('Could not load live data — is the API running?')
+      }
+    }
+    load()
+    const id = setInterval(load, 30000)
+    return () => {
+      cancelled = true
+      clearInterval(id)
+    }
+  }, [])
 
   // After a new leftover renders, fly to it and open its popup.
   useEffect(() => {
