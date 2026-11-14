@@ -4,10 +4,11 @@ import 'leaflet/dist/leaflet.css'
 import mockData from './mock-events.json'
 import buildingsData from './buildings.json'
 
+// Empty API_BASE = same origin (Caddy proxies /events etc on the Vultr box).
+// For local dev against a local API, set VITE_API_BASE=http://127.0.0.1:8000
 const USE_MOCK = false
-const API_BASE = 'http://127.0.0.1:8000'
-// When USE_MOCK is false, fetch `${API_BASE}/events` and
-// `${API_BASE}/leftovers/active` (GET) instead of using mock data.
+const API_BASE = import.meta.env.VITE_API_BASE || ''
+
 
 const UCSD_CENTER = [32.8801, -117.234]
 const FILTERS = ['all', 'now', 'today', 'vegetarian', 'halal']
