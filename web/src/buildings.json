@@ -1,0 +1,17 @@
+{
+  "note": "Coordinates are approximate (eyeballed from the campus map) and need checking before launch.",
+  "buildings": [
+    { "name": "Price Center East", "aliases": ["PC East", "PC", "Price Center"], "lat": 32.8797, "lng": -117.2358 },
+    { "name": "Price Center West", "aliases": ["PC West", "PC West Ballroom"], "lat": 32.8798, "lng": -117.2370 },
+    { "name": "Geisel Library", "aliases": ["Geisel", "the library"], "lat": 32.8811, "lng": -117.2376 },
+    { "name": "CSE Building", "aliases": ["CSE", "EBU3B"], "lat": 32.8818, "lng": -117.2335 },
+    { "name": "Warren Lecture Hall", "aliases": ["WLH"], "lat": 32.8807, "lng": -117.2343 },
+    { "name": "Center Hall", "aliases": ["Center"], "lat": 32.8775, "lng": -117.2373 },
+    { "name": "Student Services Center", "aliases": ["SSC"], "lat": 32.8786, "lng": -117.2350 },
+    { "name": "RIMAC", "aliases": ["RIMAC Arena", "RIMAC Field"], "lat": 32.8855, "lng": -117.2397 },
+    { "name": "Library Walk", "aliases": ["Lib Walk"], "lat": 32.8790, "lng": -117.2368 },
+    { "name": "Sixth College", "aliases": ["Sixth", "NTPLLN"], "lat": 32.8826, "lng": -117.2421 },
+    { "name": "Muir College", "aliases": ["Muir", "Muir Quad"], "lat": 32.8784, "lng": -117.2412 },
+    { "name": "Revelle Plaza", "aliases": ["Revelle", "Revelle Fountain"], "lat": 32.8745, "lng": -117.2410 }
+  ]
+}
