@@ -198,6 +198,32 @@ export default function App() {
     leftoverMatches(lo, filter, now),
   )
 
+  // Spread pins that share the same building coords so stacked events are clickable.
+  function withMapOffsets(items) {
+    const groups = new Map()
+    for (const item of items) {
+      if (item.lat == null || item.lng == null) continue
+      const key = `${Number(item.lat).toFixed(5)},${Number(item.lng).toFixed(5)}`
+      if (!groups.has(key)) groups.set(key, [])
+      groups.get(key).push(item)
+    }
+    const out = []
+    for (const group of groups.values()) {
+      group.forEach((item, i) => {
+        const angle = (2 * Math.PI * i) / group.length
+        const r = group.length > 1 ? 0.00035 : 0
+        out.push({
+          ...item,
+          mapLat: Number(item.lat) + r * Math.cos(angle),
+          mapLng: Number(item.lng) + r * Math.sin(angle),
+        })
+      })
+    }
+    return out
+  }
+  const mapEvents = withMapOffsets(visibleEvents)
+  const mapLeftovers = withMapOffsets(visibleLeftovers)
+
   useEffect(() => {
     // API_BASE may be '' (same-origin behind Caddy) — that is valid.
     if (USE_MOCK) return
@@ -294,10 +320,10 @@ export default function App() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {visibleEvents.map((ev) => (
+          {mapEvents.map((ev) => (
             <CircleMarker
               key={`event-${ev.id}`}
-              center={[ev.lat, ev.lng]}
+              center={[ev.mapLat, ev.mapLng]}
               radius={10}
               pathOptions={{
                 color: '#1a73e8',
@@ -338,14 +364,14 @@ export default function App() {
             </CircleMarker>
           ))}
 
-          {visibleLeftovers.map((lo) => (
+          {mapLeftovers.map((lo) => (
             <CircleMarker
               key={`leftover-${lo.id}`}
               ref={(el) => {
                 if (el) markerRefs.current[lo.id] = el
                 else delete markerRefs.current[lo.id]
               }}
-              center={[lo.lat, lo.lng]}
+              center={[lo.mapLat, lo.mapLng]}
               radius={16}
               pathOptions={{
                 color: '#188038',
