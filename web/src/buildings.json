@@ -1,17 +1,855 @@
 {
-  "note": "Coordinates are approximate (eyeballed from the campus map) and need checking before launch.",
+  "note": "Synced from infra/seed_buildings.sql / live buildings table. Coords are approximate.",
   "buildings": [
-    { "name": "Price Center East", "aliases": ["PC East", "PC", "Price Center"], "lat": 32.8797, "lng": -117.2358 },
-    { "name": "Price Center West", "aliases": ["PC West", "PC West Ballroom"], "lat": 32.8798, "lng": -117.2370 },
-    { "name": "Geisel Library", "aliases": ["Geisel", "the library"], "lat": 32.8811, "lng": -117.2376 },
-    { "name": "CSE Building", "aliases": ["CSE", "EBU3B"], "lat": 32.8818, "lng": -117.2335 },
-    { "name": "Warren Lecture Hall", "aliases": ["WLH"], "lat": 32.8807, "lng": -117.2343 },
-    { "name": "Center Hall", "aliases": ["Center"], "lat": 32.8775, "lng": -117.2373 },
-    { "name": "Student Services Center", "aliases": ["SSC"], "lat": 32.8786, "lng": -117.2350 },
-    { "name": "RIMAC", "aliases": ["RIMAC Arena", "RIMAC Field"], "lat": 32.8855, "lng": -117.2397 },
-    { "name": "Library Walk", "aliases": ["Lib Walk"], "lat": 32.8790, "lng": -117.2368 },
-    { "name": "Sixth College", "aliases": ["Sixth", "NTPLLN"], "lat": 32.8826, "lng": -117.2421 },
-    { "name": "Muir College", "aliases": ["Muir", "Muir Quad"], "lat": 32.8784, "lng": -117.2412 },
-    { "name": "Revelle Plaza", "aliases": ["Revelle", "Revelle Fountain"], "lat": 32.8745, "lng": -117.2410 }
+    {
+      "name": "Applied Physics and Mathematics",
+      "aliases": [
+        "APM",
+        "AP&M"
+      ],
+      "lat": 32.8817,
+      "lng": -117.233
+    },
+    {
+      "name": "Atkinson Hall",
+      "aliases": [
+        "Atkinson",
+        "Calit2"
+      ],
+      "lat": 32.8824,
+      "lng": -117.2346
+    },
+    {
+      "name": "Bear Room",
+      "aliases": [
+        "PC Bear Room"
+      ],
+      "lat": 32.8798,
+      "lng": -117.2361
+    },
+    {
+      "name": "Biomedical Sciences Building",
+      "aliases": [
+        "BSB"
+      ],
+      "lat": 32.8755,
+      "lng": -117.2358
+    },
+    {
+      "name": "Bonner Hall",
+      "aliases": [
+        "Bonner"
+      ],
+      "lat": 32.875,
+      "lng": -117.2405
+    },
+    {
+      "name": "CSE Building",
+      "aliases": [
+        "CSE",
+        "EBU3B",
+        "Computer Science",
+        "Computer Science and Engineering"
+      ],
+      "lat": 32.8818,
+      "lng": -117.2335
+    },
+    {
+      "name": "Canyonview Aquatic Center",
+      "aliases": [
+        "Canyonview",
+        "Canyonview Pool"
+      ],
+      "lat": 32.8862,
+      "lng": -117.2375
+    },
+    {
+      "name": "Catalyst",
+      "aliases": [
+        "CTL"
+      ],
+      "lat": 32.8832,
+      "lng": -117.2412
+    },
+    {
+      "name": "Center Hall",
+      "aliases": [
+        "Center",
+        "CENTR"
+      ],
+      "lat": 32.8775,
+      "lng": -117.2373
+    },
+    {
+      "name": "Cognitive Science Building",
+      "aliases": [
+        "CSB",
+        "Cognitive Science"
+      ],
+      "lat": 32.8814,
+      "lng": -117.2355
+    },
+    {
+      "name": "Comunidad Room",
+      "aliases": [
+        "Comunidad"
+      ],
+      "lat": 32.8797,
+      "lng": -117.2359
+    },
+    {
+      "name": "Conrad Prebys Music Center",
+      "aliases": [
+        "CPMC",
+        "Music Center",
+        "Conrad Prebys"
+      ],
+      "lat": 32.8772,
+      "lng": -117.2358
+    },
+    {
+      "name": "Cross-Cultural Center",
+      "aliases": [
+        "CCC"
+      ],
+      "lat": 32.8797,
+      "lng": -117.2366
+    },
+    {
+      "name": "Dance Studio",
+      "aliases": [
+        "PC Dance Studio",
+        "Price Center Dance Studio"
+      ],
+      "lat": 32.8796,
+      "lng": -117.2365
+    },
+    {
+      "name": "Design and Innovation Building",
+      "aliases": [
+        "DIB",
+        "Design and Innovation"
+      ],
+      "lat": 32.8776,
+      "lng": -117.2355
+    },
+    {
+      "name": "Dolores Huerta Room",
+      "aliases": [
+        "Dolores Huerta-Philip Vera Cruz Room",
+        "Huerta Room"
+      ],
+      "lat": 32.8778,
+      "lng": -117.2396
+    },
+    {
+      "name": "EBU II",
+      "aliases": [
+        "EBU2",
+        "Engineering Building Unit 2"
+      ],
+      "lat": 32.8812,
+      "lng": -117.235
+    },
+    {
+      "name": "ERC",
+      "aliases": [
+        "Eleanor Roosevelt College",
+        "Roosevelt College",
+        "Roosevelt"
+      ],
+      "lat": 32.8852,
+      "lng": -117.2425
+    },
+    {
+      "name": "Eighth College",
+      "aliases": [
+        "Eighth",
+        "8th College"
+      ],
+      "lat": 32.8862,
+      "lng": -117.2425
+    },
+    {
+      "name": "Epstein Family Amphitheater",
+      "aliases": [
+        "Epstein Amphitheater",
+        "Epstein"
+      ],
+      "lat": 32.877,
+      "lng": -117.2368
+    },
+    {
+      "name": "Faculty Club",
+      "aliases": [
+        "Ida and Cecil Green Faculty Club",
+        "Green Faculty Club"
+      ],
+      "lat": 32.8788,
+      "lng": -117.2378
+    },
+    {
+      "name": "Franklin Antonio Hall",
+      "aliases": [
+        "FAH",
+        "Antonio Hall"
+      ],
+      "lat": 32.8816,
+      "lng": -117.234
+    },
+    {
+      "name": "Galbraith Hall",
+      "aliases": [
+        "Galbraith",
+        "GH"
+      ],
+      "lat": 32.8749,
+      "lng": -117.2408
+    },
+    {
+      "name": "Geisel East Wing",
+      "aliases": [
+        "Geisel East",
+        "BLB",
+        "Biomedical Library Building"
+      ],
+      "lat": 32.8813,
+      "lng": -117.237
+    },
+    {
+      "name": "Geisel Library",
+      "aliases": [
+        "Geisel",
+        "the library",
+        "University Library"
+      ],
+      "lat": 32.8811,
+      "lng": -117.2376
+    },
+    {
+      "name": "Governance Chambers",
+      "aliases": [
+        "Governance Chamber"
+      ],
+      "lat": 32.88,
+      "lng": -117.2364
+    },
+    {
+      "name": "Great Hall",
+      "aliases": [
+        "I-House Great Hall",
+        "International House Great Hall",
+        "I House"
+      ],
+      "lat": 32.8858,
+      "lng": -117.2428
+    },
+    {
+      "name": "Green Table Room",
+      "aliases": [
+        "Green Table"
+      ],
+      "lat": 32.87985,
+      "lng": -117.2362
+    },
+    {
+      "name": "Halicioglu Data Science Institute",
+      "aliases": [
+        "HDSI",
+        "Data Science Institute"
+      ],
+      "lat": 32.8815,
+      "lng": -117.2336
+    },
+    {
+      "name": "Humanities and Social Sciences",
+      "aliases": [
+        "HSS"
+      ],
+      "lat": 32.877,
+      "lng": -117.2418
+    },
+    {
+      "name": "Institute of the Americas",
+      "aliases": [
+        "IOA",
+        "Copley International Conference Center",
+        "CICC"
+      ],
+      "lat": 32.885,
+      "lng": -117.2418
+    },
+    {
+      "name": "Jacobs Hall",
+      "aliases": [
+        "EBU1",
+        "Jacobs School"
+      ],
+      "lat": 32.8815,
+      "lng": -117.2352
+    },
+    {
+      "name": "Jeannie Auditorium",
+      "aliases": [
+        "The Jeannie",
+        "Jeannie"
+      ],
+      "lat": 32.883,
+      "lng": -117.2415
+    },
+    {
+      "name": "Ledden Auditorium",
+      "aliases": [
+        "Ledden"
+      ],
+      "lat": 32.8778,
+      "lng": -117.2415
+    },
+    {
+      "name": "Library Walk",
+      "aliases": [
+        "Lib Walk"
+      ],
+      "lat": 32.879,
+      "lng": -117.2368
+    },
+    {
+      "name": "Main Gym",
+      "aliases": [
+        "Main Gymnasium",
+        "LionTree Arena",
+        "LionTree"
+      ],
+      "lat": 32.885,
+      "lng": -117.2385
+    },
+    {
+      "name": "Malk Hall",
+      "aliases": [
+        "Malk",
+        "Malk Center",
+        "Brian C. Malk Hall"
+      ],
+      "lat": 32.8799,
+      "lng": -117.2346
+    },
+    {
+      "name": "Mandeville Auditorium",
+      "aliases": [
+        "Mandeville",
+        "MANDE",
+        "Mandeville Center"
+      ],
+      "lat": 32.8782,
+      "lng": -117.239
+    },
+    {
+      "name": "Mandeville Center",
+      "aliases": [
+        "Mandeville Center Lobby"
+      ],
+      "lat": 32.8783,
+      "lng": -117.2391
+    },
+    {
+      "name": "Marshall College",
+      "aliases": [
+        "Marshall",
+        "Thurgood Marshall",
+        "Marshall Lower Apartments Lawn"
+      ],
+      "lat": 32.878,
+      "lng": -117.2418
+    },
+    {
+      "name": "Marshall College Room",
+      "aliases": [
+        "PC Marshall Room"
+      ],
+      "lat": 32.8797,
+      "lng": -117.2369
+    },
+    {
+      "name": "Matthews Quad",
+      "aliases": [
+        "Matthews",
+        "Matthews Green"
+      ],
+      "lat": 32.8782,
+      "lng": -117.2365
+    },
+    {
+      "name": "Mosaic",
+      "aliases": [
+        "MOS",
+        "Sixth Mosaic"
+      ],
+      "lat": 32.8828,
+      "lng": -117.2418
+    },
+    {
+      "name": "Muir College",
+      "aliases": [
+        "Muir",
+        "Muir Quad"
+      ],
+      "lat": 32.8784,
+      "lng": -117.2412
+    },
+    {
+      "name": "Muir College Room",
+      "aliases": [
+        "PC Muir Room"
+      ],
+      "lat": 32.87975,
+      "lng": -117.2357
+    },
+    {
+      "name": "Natural Sciences Building",
+      "aliases": [
+        "NSB",
+        "Natural Sciences"
+      ],
+      "lat": 32.8758,
+      "lng": -117.2418
+    },
+    {
+      "name": "Pacific Hall",
+      "aliases": [
+        "Pacific"
+      ],
+      "lat": 32.8752,
+      "lng": -117.2412
+    },
+    {
+      "name": "Pepper Canyon Hall",
+      "aliases": [
+        "PCYH",
+        "PCYNH",
+        "Pepper Canyon"
+      ],
+      "lat": 32.8789,
+      "lng": -117.2395
+    },
+    {
+      "name": "Peterson Hall",
+      "aliases": [
+        "Peterson",
+        "PETER"
+      ],
+      "lat": 32.88,
+      "lng": -117.2348
+    },
+    {
+      "name": "Podemos",
+      "aliases": [
+        "Eighth College Podemos"
+      ],
+      "lat": 32.886,
+      "lng": -117.242
+    },
+    {
+      "name": "Port of Ensenada Room",
+      "aliases": [
+        "Port of Ensenada"
+      ],
+      "lat": 32.87985,
+      "lng": -117.2359
+    },
+    {
+      "name": "Port of San Diego Room",
+      "aliases": [
+        "Port of San Diego"
+      ],
+      "lat": 32.8799,
+      "lng": -117.236
+    },
+    {
+      "name": "Price Center Ballroom",
+      "aliases": [
+        "PC Ballroom",
+        "Price Center Ballrooms",
+        "Ballrooms"
+      ],
+      "lat": 32.8797,
+      "lng": -117.2364
+    },
+    {
+      "name": "Price Center Ballroom East",
+      "aliases": [
+        "Ballroom East",
+        "PC Ballroom East",
+        "East Ballroom"
+      ],
+      "lat": 32.87965,
+      "lng": -117.2362
+    },
+    {
+      "name": "Price Center Ballroom West",
+      "aliases": [
+        "Ballroom West",
+        "PC Ballroom West",
+        "West Ballroom",
+        "Ballroom West A",
+        "Ballroom West B"
+      ],
+      "lat": 32.87975,
+      "lng": -117.2368
+    },
+    {
+      "name": "Price Center East",
+      "aliases": [
+        "PC East",
+        "PC",
+        "Price Center",
+        "Price Center Plaza"
+      ],
+      "lat": 32.8797,
+      "lng": -117.2358
+    },
+    {
+      "name": "Price Center Theater",
+      "aliases": [
+        "PC Theater",
+        "Price Center Theatre"
+      ],
+      "lat": 32.8795,
+      "lng": -117.236
+    },
+    {
+      "name": "Price Center West",
+      "aliases": [
+        "PC West"
+      ],
+      "lat": 32.8798,
+      "lng": -117.237
+    },
+    {
+      "name": "RIMAC",
+      "aliases": [
+        "RIMAC Arena",
+        "RIMAC Field",
+        "RIMAC Arena Annex"
+      ],
+      "lat": 32.8855,
+      "lng": -117.2397
+    },
+    {
+      "name": "RIMAC Meeting Rooms",
+      "aliases": [
+        "RIMAC Annex"
+      ],
+      "lat": 32.8856,
+      "lng": -117.2395
+    },
+    {
+      "name": "Rady School of Management",
+      "aliases": [
+        "Rady",
+        "Rady Hall"
+      ],
+      "lat": 32.8865,
+      "lng": -117.241
+    },
+    {
+      "name": "Red Shoe Room",
+      "aliases": [
+        "Red Shoe"
+      ],
+      "lat": 32.8798,
+      "lng": -117.2363
+    },
+    {
+      "name": "Revelle College Room",
+      "aliases": [
+        "PC Revelle Room"
+      ],
+      "lat": 32.8797,
+      "lng": -117.2368
+    },
+    {
+      "name": "Revelle Plaza",
+      "aliases": [
+        "Revelle",
+        "Revelle Fountain",
+        "Revelle College"
+      ],
+      "lat": 32.8745,
+      "lng": -117.241
+    },
+    {
+      "name": "Ridge Walk Academic Complex",
+      "aliases": [
+        "RWAC",
+        "Ridgewalk"
+      ],
+      "lat": 32.8835,
+      "lng": -117.2408
+    },
+    {
+      "name": "Robinson Auditorium",
+      "aliases": [
+        "Robinson",
+        "GPS Robinson"
+      ],
+      "lat": 32.8845,
+      "lng": -117.241
+    },
+    {
+      "name": "Roosevelt College Room",
+      "aliases": [
+        "PC Roosevelt Room",
+        "ERC Room"
+      ],
+      "lat": 32.8797,
+      "lng": -117.2367
+    },
+    {
+      "name": "SSC Multipurpose Room",
+      "aliases": [
+        "SSC MPR",
+        "Student Services Multipurpose Room"
+      ],
+      "lat": 32.87865,
+      "lng": -117.2351
+    },
+    {
+      "name": "San Diego Supercomputer Center",
+      "aliases": [
+        "SDSC"
+      ],
+      "lat": 32.8842,
+      "lng": -117.2395
+    },
+    {
+      "name": "Senate Chambers",
+      "aliases": [
+        "Senate Chamber",
+        "AS Senate"
+      ],
+      "lat": 32.87995,
+      "lng": -117.2366
+    },
+    {
+      "name": "Seventh College",
+      "aliases": [
+        "Seventh",
+        "7th College"
+      ],
+      "lat": 32.8838,
+      "lng": -117.2425
+    },
+    {
+      "name": "Sixth College",
+      "aliases": [
+        "Sixth",
+        "NTPLLN",
+        "North Torrey Pines Living and Learning"
+      ],
+      "lat": 32.8826,
+      "lng": -117.2421
+    },
+    {
+      "name": "Sixth College Room",
+      "aliases": [
+        "PC Sixth Room"
+      ],
+      "lat": 32.8799,
+      "lng": -117.2358
+    },
+    {
+      "name": "Social Sciences Building",
+      "aliases": [
+        "SSB",
+        "Social Sciences"
+      ],
+      "lat": 32.882,
+      "lng": -117.2402
+    },
+    {
+      "name": "Solis Hall",
+      "aliases": [
+        "Solis",
+        "SOLIS"
+      ],
+      "lat": 32.881,
+      "lng": -117.2338
+    },
+    {
+      "name": "Structural and Materials Engineering",
+      "aliases": [
+        "SME",
+        "Structural Engineering"
+      ],
+      "lat": 32.8819,
+      "lng": -117.2332
+    },
+    {
+      "name": "Student Center",
+      "aliases": [
+        "Old Student Center",
+        "SC"
+      ],
+      "lat": 32.8779,
+      "lng": -117.2394
+    },
+    {
+      "name": "Student Center Stage Room",
+      "aliases": [
+        "Stage Room",
+        "The Stage Room"
+      ],
+      "lat": 32.87785,
+      "lng": -117.2395
+    },
+    {
+      "name": "Student Leadership Chambers",
+      "aliases": [
+        "Student Leadership Chamber"
+      ],
+      "lat": 32.8799,
+      "lng": -117.2367
+    },
+    {
+      "name": "Student Services Center",
+      "aliases": [
+        "SSC"
+      ],
+      "lat": 32.8786,
+      "lng": -117.235
+    },
+    {
+      "name": "Sun God Lawn",
+      "aliases": [
+        "Sun God",
+        "Sun God Lawn Area"
+      ],
+      "lat": 32.8785,
+      "lng": -117.2398
+    },
+    {
+      "name": "Sun God Lounge",
+      "aliases": [
+        "PC Sun God Lounge"
+      ],
+      "lat": 32.8798,
+      "lng": -117.2364
+    },
+    {
+      "name": "The Forum",
+      "aliases": [
+        "Forum",
+        "PC Forum",
+        "Price Center Forum"
+      ],
+      "lat": 32.8799,
+      "lng": -117.2365
+    },
+    {
+      "name": "The Grove Meeting Room",
+      "aliases": [
+        "Grove",
+        "Grove Meeting Room"
+      ],
+      "lat": 32.87795,
+      "lng": -117.2393
+    },
+    {
+      "name": "The Hub Basic Needs Center",
+      "aliases": [
+        "The Hub",
+        "Basic Needs",
+        "Basic Needs Center",
+        "Triton Food Pantry"
+      ],
+      "lat": 32.8777,
+      "lng": -117.2394
+    },
+    {
+      "name": "The Hump",
+      "aliases": [
+        "Hump"
+      ],
+      "lat": 32.8788,
+      "lng": -117.238
+    },
+    {
+      "name": "The Loft",
+      "aliases": [
+        "Loft",
+        "Zanzibar"
+      ],
+      "lat": 32.8799,
+      "lng": -117.2371
+    },
+    {
+      "name": "The Loft Outdoor Stage",
+      "aliases": [
+        "Loft Stage"
+      ],
+      "lat": 32.88,
+      "lng": -117.2372
+    },
+    {
+      "name": "Thich Nhat Hanh Room",
+      "aliases": [
+        "Thich Nhat Hanh"
+      ],
+      "lat": 32.87775,
+      "lng": -117.23955
+    },
+    {
+      "name": "Town Square",
+      "aliases": [
+        "PC Town Square"
+      ],
+      "lat": 32.8794,
+      "lng": -117.2362
+    },
+    {
+      "name": "Warren College",
+      "aliases": [
+        "Warren",
+        "Earl Warren College"
+      ],
+      "lat": 32.8815,
+      "lng": -117.233
+    },
+    {
+      "name": "Warren College Room",
+      "aliases": [
+        "PC Warren Room",
+        "Earl Warren Room",
+        "Earl Warren College Room"
+      ],
+      "lat": 32.8799,
+      "lng": -117.237
+    },
+    {
+      "name": "Warren Lecture Hall",
+      "aliases": [
+        "WLH",
+        "Warren Lecture"
+      ],
+      "lat": 32.8807,
+      "lng": -117.2343
+    },
+    {
+      "name": "Warren Mall",
+      "aliases": [
+        "Warren Mall Lawn"
+      ],
+      "lat": 32.881,
+      "lng": -117.2345
+    },
+    {
+      "name": "York Hall",
+      "aliases": [
+        "York",
+        "YH"
+      ],
+      "lat": 32.8748,
+      "lng": -117.2398
+    }
   ]
 }
