@@ -1,0 +1,33 @@
+{
+	# Automatic HTTPS when a real domain is set via {$SITE_ADDRESS}
+	email {$CADDY_EMAIL:hack@example.com}
+}
+
+{$SITE_ADDRESS::80} {
+	encode gzip
+
+	handle /health* {
+		reverse_proxy api:8000
+	}
+	handle /events* {
+		reverse_proxy api:8000
+	}
+	handle /leftovers* {
+		reverse_proxy api:8000
+	}
+	handle /admin* {
+		reverse_proxy api:8000
+	}
+	handle /docs* {
+		reverse_proxy api:8000
+	}
+	handle /openapi.json {
+		reverse_proxy api:8000
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}

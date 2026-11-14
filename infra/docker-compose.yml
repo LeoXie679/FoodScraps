@@ -1,0 +1,56 @@
+# Run from repo root:
+#   docker compose -f infra/docker-compose.yml up -d --build
+#
+# First time: copy .env.example → .env and fill keys.
+# For IP-only demo (no domain yet): SITE_ADDRESS=:80
+
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.api
+    env_file:
+      - ../.env
+    restart: unless-stopped
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  web-build:
+    image: node:22-alpine
+    working_dir: /src
+    volumes:
+      - ../web:/src
+      - web_node_modules:/src/node_modules
+      - web_dist:/out
+    command: sh -c "npm install && npm run build && rm -rf /out/* && cp -r dist/* /out/"
+
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+      CADDY_EMAIL: ${CADDY_EMAIL:-hack@example.com}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - web_dist:/srv
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_started
+      web-build:
+        condition: service_completed_successfully
+
+volumes:
+  web_node_modules:
+  web_dist:
+  caddy_data:
+  caddy_config:
