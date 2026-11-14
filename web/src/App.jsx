@@ -4,10 +4,11 @@ import 'leaflet/dist/leaflet.css'
 import mockData from './mock-events.json'
 import buildingsData from './buildings.json'
 
+// Empty API_BASE = same origin (Caddy proxies /events etc on the Vultr box).
+// For local dev against a local API, set VITE_API_BASE=http://127.0.0.1:8000
 const USE_MOCK = false
-const API_BASE = 'http://127.0.0.1:8000'
-// When USE_MOCK is false, fetch `${API_BASE}/events` and
-// `${API_BASE}/leftovers/active` (GET) instead of using mock data.
+const API_BASE = import.meta.env.VITE_API_BASE || ''
+
 
 const UCSD_CENTER = [32.8801, -117.234]
 const FILTERS = ['all', 'now', 'today', 'vegetarian', 'halal']
@@ -197,8 +198,36 @@ export default function App() {
     leftoverMatches(lo, filter, now),
   )
 
+  // Spread pins that share the same building coords so stacked events are clickable.
+  function withMapOffsets(items) {
+    const groups = new Map()
+    for (const item of items) {
+      if (item.lat == null || item.lng == null) continue
+      const key = `${Number(item.lat).toFixed(5)},${Number(item.lng).toFixed(5)}`
+      if (!groups.has(key)) groups.set(key, [])
+      groups.get(key).push(item)
+    }
+    const out = []
+    for (const group of groups.values()) {
+      group.forEach((item, i) => {
+        const angle = (2 * Math.PI * i) / group.length
+        // ~8–12m spread — enough to click separately, still looks like one building
+        const r = group.length > 1 ? 0.00008 : 0
+        out.push({
+          ...item,
+          mapLat: Number(item.lat) + r * Math.cos(angle),
+          mapLng: Number(item.lng) + r * Math.sin(angle),
+        })
+      })
+    }
+    return out
+  }
+  const mapEvents = withMapOffsets(visibleEvents)
+  const mapLeftovers = withMapOffsets(visibleLeftovers)
+
   useEffect(() => {
-    if (USE_MOCK || !API_BASE) return
+    // API_BASE may be '' (same-origin behind Caddy) — that is valid.
+    if (USE_MOCK) return
     let cancelled = false
     async function load() {
       try {
@@ -292,10 +321,10 @@ export default function App() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
-          {visibleEvents.map((ev) => (
+          {mapEvents.map((ev) => (
             <CircleMarker
               key={`event-${ev.id}`}
-              center={[ev.lat, ev.lng]}
+              center={[ev.mapLat, ev.mapLng]}
               radius={10}
               pathOptions={{
                 color: '#1a73e8',
@@ -336,14 +365,14 @@ export default function App() {
             </CircleMarker>
           ))}
 
-          {visibleLeftovers.map((lo) => (
+          {mapLeftovers.map((lo) => (
             <CircleMarker
               key={`leftover-${lo.id}`}
               ref={(el) => {
                 if (el) markerRefs.current[lo.id] = el
                 else delete markerRefs.current[lo.id]
               }}
-              center={[lo.lat, lo.lng]}
+              center={[lo.mapLat, lo.mapLng]}
               radius={16}
               pathOptions={{
                 color: '#188038',
