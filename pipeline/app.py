@@ -16,6 +16,7 @@ from api.db import get_conn
 from pipeline.vision import extract_event
 from pipeline.schemas import EventExtraction
 from pipeline.scoring import calculate_confidence
+from pipeline.dedup import are_duplicates
 
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env")
@@ -157,6 +158,45 @@ def process_post(conn, s3, post):
             result.start,
         )
 
+        # Check whether this event already exists.
+        if result.date:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT
+                        title,
+                        org,
+                        location_name,
+                        (start_time AT TIME ZONE 'America/Los_Angeles')::date AS date
+                    FROM events
+                    WHERE (start_time AT TIME ZONE 'America/Los_Angeles')::date = %s::date
+                    """,
+                    (result.date,),
+                )
+                existing_events = cur.fetchall()
+
+            candidate = {
+                "title": result.title,
+                "org": result.org,
+                "location_name": location_name,
+                "date": result.date,
+            }
+
+            duplicate = any(
+                are_duplicates(candidate, dict(event))
+                for event in existing_events
+            )
+
+            if duplicate:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "UPDATE raw_posts SET status = 'processed' WHERE id = %s",
+                        (post_id,),
+                    )
+                conn.commit()
+                logger.info("Duplicate event skipped for post %s", post_id)
+                return "duplicate"
+
         with conn.cursor() as cur:
             cur.execute(
                 """
@@ -253,6 +293,7 @@ def process_new_posts():
         results = {
             "processed": 0,
             "not_food": 0,
+            "duplicate": 0,
             "failed": 0,
         }
 
