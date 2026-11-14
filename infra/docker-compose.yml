@@ -14,8 +14,28 @@ services:
     restart: unless-stopped
     expose:
       - "8000"
+    depends_on:
+      - pipeline
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  # Person B vision pipeline — internal URL for API: http://pipeline:8001/process
+  pipeline:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.pipeline
+    env_file:
+      - ../.env
+    restart: unless-stopped
+    expose:
+      - "8001"
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8001/health"]
       interval: 30s
       timeout: 5s
       retries: 5

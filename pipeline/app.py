@@ -4,9 +4,11 @@ import logging
 import tempfile
 from datetime import datetime, date, time
 from pathlib import Path
+from typing import Optional
 from zoneinfo import ZoneInfo
 
 import boto3
+from dotenv import load_dotenv
 from fastapi import FastAPI, Header, HTTPException
 from rapidfuzz import fuzz, process
 
@@ -15,12 +17,14 @@ from pipeline.vision import extract_event
 from pipeline.schemas import EventExtraction
 from pipeline.scoring import calculate_confidence
 
+ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(ROOT / ".env")
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Free Food Radar AI Pipeline")
 
-ROOT = Path(__file__).resolve().parents[1]
 TIMEZONE = ZoneInfo("America/Los_Angeles")
 
 
@@ -269,7 +273,7 @@ def health():
 
 @app.post("/process")
 def process_endpoint(
-    authorization: str | None = Header(default=None),
+    authorization: Optional[str] = Header(default=None),
 ):
     expected_token = os.getenv("PIPELINE_TOKEN", "").strip()
 

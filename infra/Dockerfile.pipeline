@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY pipeline/requirements.txt /app/pipeline/requirements.txt
+COPY api/requirements.txt /app/api/requirements.txt
+RUN pip install --no-cache-dir \
+  -r /app/pipeline/requirements.txt \
+  -r /app/api/requirements.txt
+
+COPY api /app/api
+COPY pipeline /app/pipeline
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+EXPOSE 8001
+CMD ["uvicorn", "pipeline.app:app", "--host", "0.0.0.0", "--port", "8001"]
