@@ -141,6 +141,9 @@ function parsePipeline(p) {
       not_food: n('not_food'),
       duplicate: n('duplicate'),
       failed: n('failed'),
+      // Added by the pipeline on Nov 14: flyers with no date are held back
+      // (status 'no_date') and retried on later runs instead of being saved.
+      no_date: n('no_date'),
     },
     problem: null,
   }

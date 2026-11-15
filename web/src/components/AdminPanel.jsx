@@ -55,6 +55,9 @@ function Summary({ result }) {
             </p>
             <p className="admin-summary__sub">
               {plural(counts.not_food, 'post')} without free food ·{' '}
+              {counts.no_date > 0 && (
+                <>{counts.no_date} without a date (will retry) · </>
+              )}
               {plural(counts.duplicate, 'duplicate')} · {counts.failed} failed
             </p>
           </>
