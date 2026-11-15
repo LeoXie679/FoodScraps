@@ -1,3 +1,75 @@
+/* ---- Theme tokens: light by default, dark navy with data-theme="dark" ---- */
+:root {
+  --page: #ffffff;
+  --surface: #ffffff;
+  --surface-subtle: #f1f3f4;
+  --text: #202124;
+  --text-muted: #5f6368;
+  --border: #dadce0;
+  --border-soft: #eeeeee;
+  --shadow: rgba(0, 0, 0, 0.25);
+  --backdrop: rgba(0, 0, 0, 0.55);
+
+  --accent: #1a73e8;
+  --accent-bg: #e8f0fe;
+  --blue-text: #1967d2;
+  --green-strong: #188038;
+  --green-bg: #e6f4ea;
+  --green-text: #137333;
+  --amber: #f9ab00;
+  --amber-bg: #fef7e0;
+  --amber-text: #b06000;
+  --storm-bg: #ede7f6;
+  --storm-text: #4527a0;
+  --red: #d93025;
+  --inverse-bg: #202124;
+  --inverse-text: #ffffff;
+
+  /* Map pins */
+  --pin-bg: #ffffff;
+  --pin-event-border: #1a73e8;
+  --pin-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  --pin-event-glow: var(--pin-shadow);
+  --pin-leftover-glow: var(--pin-shadow);
+  --ring: #34a853;
+  --ring-glow: none;
+}
+
+:root[data-theme='dark'] {
+  --page: #0b1226;
+  --surface: #111a33;
+  --surface-subtle: #1b2747;
+  --text: #e6ebff;
+  --text-muted: #9aa6c8;
+  --border: #2a3a63;
+  --border-soft: #1f2c50;
+  --shadow: rgba(0, 0, 0, 0.6);
+  --backdrop: rgba(3, 6, 18, 0.75);
+
+  --accent: #7aa7ff;
+  --accent-bg: #1d2f5c;
+  --blue-text: #93b4ff;
+  --green-strong: #1f9d5a;
+  --green-bg: rgba(47, 191, 113, 0.16);
+  --green-text: #6ee7a8;
+  --amber: #fbbf24;
+  --amber-bg: rgba(251, 191, 36, 0.15);
+  --amber-text: #fbbf24;
+  --storm-bg: rgba(167, 139, 250, 0.18);
+  --storm-text: #c4b5fd;
+  --red: #ff5a5f;
+  --inverse-bg: #e6ebff;
+  --inverse-text: #0b1226;
+
+  /* Soft neon glow on pins */
+  --pin-bg: #16213f;
+  --pin-event-border: #7aa7ff;
+  --pin-event-glow: 0 0 6px rgba(122, 167, 255, 0.85), 0 0 16px rgba(122, 167, 255, 0.45);
+  --pin-leftover-glow: 0 0 8px rgba(61, 255, 154, 0.9), 0 0 20px rgba(61, 255, 154, 0.5);
+  --ring: #3dff9a;
+  --ring-glow: 0 0 10px rgba(61, 255, 154, 0.8);
+}
+
 html,
 body,
 #root {
@@ -7,10 +79,51 @@ body,
 
 body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--page);
+  color: var(--text);
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+a {
+  color: var(--accent);
+}
+
+/* ---- Leaflet chrome in night mode ---- */
+:root[data-theme='dark'] .leaflet-container {
+  background: #0b1226;
+}
+
+:root[data-theme='dark'] .leaflet-popup-content-wrapper,
+:root[data-theme='dark'] .leaflet-popup-tip {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 3px 14px var(--shadow);
+}
+
+:root[data-theme='dark'] .leaflet-container a.leaflet-popup-close-button {
+  color: var(--text-muted);
+}
+
+:root[data-theme='dark'] .leaflet-bar a {
+  background: var(--surface);
+  color: var(--text);
+  border-bottom-color: var(--border);
+}
+
+:root[data-theme='dark'] .leaflet-bar a:hover {
+  background: var(--surface-subtle);
+}
+
+:root[data-theme='dark'] .leaflet-control-attribution {
+  background: rgba(17, 26, 51, 0.8);
+  color: var(--text-muted);
+}
+
+:root[data-theme='dark'] .leaflet-control-attribution a {
+  color: var(--accent);
 }

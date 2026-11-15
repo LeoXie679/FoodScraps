@@ -18,23 +18,23 @@
 }
 
 .food-weather__badge--storm {
-  background: #ede7f6;
-  color: #4527a0;
+  background: var(--storm-bg);
+  color: var(--storm-text);
 }
 
 .food-weather__badge--sunny {
-  background: #fef7e0;
-  color: #b06000;
+  background: var(--amber-bg);
+  color: var(--amber-text);
 }
 
 .food-weather__badge--cloudy {
-  background: #e8f0fe;
-  color: #1967d2;
+  background: var(--accent-bg);
+  color: var(--blue-text);
 }
 
 .food-weather__badge--dry {
-  background: #f1f3f4;
-  color: #5f6368;
+  background: var(--surface-subtle);
+  color: var(--text-muted);
 }
 
 .food-weather__forecast {
@@ -46,8 +46,8 @@
   max-width: min(320px, calc(100vw - 24px));
   padding: 8px 12px;
   border-radius: 10px;
-  background: #202124;
-  color: #fff;
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
   font-size: 0.88rem;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 14px var(--shadow);
 }

@@ -47,6 +47,11 @@ export function normalizeEvent(raw) {
     image_url: toText(raw.image_url),
     // Not sent by the API yet; the live feed uses it if the backend adds it.
     created_at: toTime(raw.created_at),
+    // Which fallbacks above were used, so the flyer panel can be honest.
+    found: {
+      title: toText(raw.title) != null,
+      confidence: confidence != null,
+    },
   }
 }
 
@@ -90,6 +95,14 @@ export async function fetchLiveData() {
     events: normalizeList(events, normalizeEvent),
     leftovers: normalizeList(leftovers, normalizeLeftover),
   }
+}
+
+/** GET /events/{id}: full event (with a freshly signed image_url) + caption. */
+export async function fetchEventDetail(id) {
+  const res = await fetch(`${API_BASE}/events/${encodeURIComponent(id)}`)
+  if (!res.ok) throw new Error(`Server returned ${res.status}`)
+  const raw = await res.json()
+  return { event: normalizeEvent(raw), caption: toText(raw.caption) }
 }
 
 // ---- Posting ----

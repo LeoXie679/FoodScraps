@@ -9,30 +9,30 @@
 
 .time-badge--now,
 .time-badge--leftover {
-  background: #e6f4ea;
-  color: #137333;
+  background: var(--green-bg);
+  color: var(--green-text);
 }
 
 .time-badge--soon {
-  background: #fef7e0;
-  color: #b06000;
+  background: var(--amber-bg);
+  color: var(--amber-text);
 }
 
 .time-badge--later {
-  background: #e8f0fe;
-  color: #1967d2;
+  background: var(--accent-bg);
+  color: var(--blue-text);
 }
 
 .time-badge--ended,
 .time-badge--unknown {
-  background: #f1f3f4;
-  color: #5f6368;
+  background: var(--surface-subtle);
+  color: var(--text-muted);
 }
 
 .diet-tag {
   display: inline-block;
-  background: #f1f3f4;
-  color: #3c4043;
+  background: var(--surface-subtle);
+  color: var(--text);
   border-radius: 8px;
   padding: 1px 6px;
   font-size: 0.75rem;

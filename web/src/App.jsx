@@ -6,6 +6,7 @@ import Header from './components/Header.jsx'
 import EventList from './components/EventList.jsx'
 import ActivityTicker from './components/ActivityFeed.jsx'
 import PostLeftoversPanel from './components/PostLeftoversPanel.jsx'
+import FlyerModal from './components/FlyerModal.jsx'
 import { EventMarker, LeftoverMarker } from './components/FoodMarker.jsx'
 import { eventMatches, isDietFilter, leftoverMatches } from './lib/filters.js'
 import { withMapOffsets } from './lib/spread.js'
@@ -14,11 +15,27 @@ import { buildFeed } from './lib/feed.js'
 import { useNow } from './hooks/useNow.js'
 import { useMediaQuery } from './hooks/useMediaQuery.js'
 import { useLiveData } from './hooks/useLiveData.js'
+import { useTheme } from './hooks/useTheme.js'
 
 // USE_MOCK, API_BASE and POLL_MS live in ./config.js; fetching and field
 // mapping are in ./lib/api.js; polling is in ./hooks/useLiveData.js.
 
 const UCSD_CENTER = [32.8801, -117.234]
+
+const OSM_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+const TILES = {
+  light: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: OSM_ATTRIBUTION,
+    subdomains: 'abc',
+  },
+  dark: {
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    attribution: `${OSM_ATTRIBUTION} &copy; <a href="https://carto.com/attributions">CARTO</a>`,
+    subdomains: 'abcd',
+  },
+}
 
 export default function App() {
   const now = useNow(30000)
@@ -29,6 +46,10 @@ export default function App() {
   const [toast, setToast] = useState('')
   const [focusKey, setFocusKey] = useState(null)
   const [map, setMap] = useState(null)
+  const [flyerEvent, setFlyerEvent] = useState(null)
+  const [theme, toggleTheme] = useTheme()
+  const tiles = TILES[theme]
+  const closeFlyer = useCallback(() => setFlyerEvent(null), [])
 
   const { events, leftovers, setLeftovers, detectedAt } = useLiveData({
     onError: setToast,
@@ -140,6 +161,7 @@ export default function App() {
       now={now}
       onSelect={flyToMarker}
       onSelectFeed={handleSelectFeed}
+      onShowFlyer={setFlyerEvent}
       onPeekHeight={handlePeekHeight}
     />
   )
@@ -151,6 +173,8 @@ export default function App() {
         onFilterChange={setFilter}
         onTogglePost={() => setShowPanel((s) => !s)}
         weather={weather}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
       <ActivityTicker items={feed} onSelect={handleSelectFeed} />
 
@@ -166,9 +190,12 @@ export default function App() {
           >
             {/* Top-right so the mobile bottom sheet doesn't cover it. */}
             <AttributionControl position="topright" />
+            {/* key={theme} remounts the layer so the attribution swaps too. */}
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              key={theme}
+              url={tiles.url}
+              attribution={tiles.attribution}
+              subdomains={tiles.subdomains}
             />
 
             {mapEvents.map((ev) => (
@@ -177,6 +204,7 @@ export default function App() {
                 ref={registerMarker(`event-${ev.id}`)}
                 event={ev}
                 now={now}
+                onShowFlyer={setFlyerEvent}
               />
             ))}
 
@@ -206,6 +234,10 @@ export default function App() {
           )}
         </div>
       </div>
+
+      {flyerEvent && (
+        <FlyerModal key={flyerEvent.id} event={flyerEvent} onClose={closeFlyer} />
+      )}
     </div>
   )
 }

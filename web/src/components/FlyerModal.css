@@ -1,0 +1,259 @@
+.flyer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--backdrop);
+}
+
+/* Phone: full screen */
+.flyer-modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--surface);
+  color: var(--text);
+  overflow: hidden;
+}
+
+.flyer-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px 10px 16px;
+  border-bottom: 1px solid var(--border-soft);
+  flex-shrink: 0;
+}
+
+.flyer-modal__header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.flyer-modal__close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface-subtle);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.flyer-modal__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.flyer-modal__image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-subtle);
+  padding: 12px;
+}
+
+.flyer-modal__image img {
+  display: block;
+  max-width: 100%;
+  max-height: 60vh;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.flyer-modal__noimage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 200px;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+}
+
+.flyer-modal__info {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 16px;
+}
+
+.flyer-modal__info h3 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+}
+
+/* Desktop: centered two-column card */
+@media (min-width: 769px) {
+  .flyer-modal {
+    width: min(960px, calc(100vw - 48px));
+    height: auto;
+    max-height: calc(100vh - 48px);
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  }
+
+  .flyer-modal__body {
+    flex-direction: row;
+  }
+
+  .flyer-modal__image {
+    flex: 1 1 45%;
+    align-items: flex-start;
+  }
+
+  .flyer-modal__image img {
+    max-height: calc(100vh - 160px);
+  }
+
+  .flyer-modal__info {
+    flex: 1 1 55%;
+    overflow-y: auto;
+  }
+}
+
+/* ---- Extracted fields ---- */
+.flyer-fields {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flyer-field {
+  display: grid;
+  grid-template-columns: 18px 110px 1fr;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.92rem;
+}
+
+.flyer-field__mark {
+  color: var(--green-text);
+  font-weight: 700;
+}
+
+.flyer-field__label {
+  color: var(--text-muted);
+}
+
+.flyer-field--missing .flyer-field__mark,
+.flyer-field--missing .flyer-field__value {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.flyer-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* ---- Confidence ---- */
+.flyer-level--high {
+  color: var(--green-text);
+}
+
+.flyer-level--medium {
+  color: var(--amber-text);
+}
+
+.flyer-level--low {
+  color: var(--red);
+}
+
+.flyer-bar {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--surface-subtle);
+  overflow: hidden;
+}
+
+.flyer-bar__fill {
+  height: 100%;
+  border-radius: 5px;
+}
+
+.flyer-bar__fill--high {
+  background: var(--green-strong);
+}
+
+.flyer-bar__fill--medium {
+  background: var(--amber);
+}
+
+.flyer-bar__fill--low {
+  background: var(--red);
+}
+
+/* ---- Caption ---- */
+.flyer-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.flyer-caption {
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  margin: 8px 0 0;
+}
+
+.flyer-muted {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin: 6px 0 0;
+}
+
+/* ---- Pipeline strip ---- */
+.flyer-pipeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.flyer-pipeline li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--surface-subtle);
+  font-size: 0.85rem;
+  position: relative;
+}
+
+.flyer-pipeline li:not(:last-child)::after {
+  content: '↓';
+  position: absolute;
+  left: 18px;
+  bottom: -11px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  z-index: 1;
+}
+
+.flyer-pipeline__icon {
+  font-size: 1.1rem;
+}
+
+.flyer-modal__source {
+  align-self: flex-start;
+  text-decoration: none;
+  color: var(--text);
+}

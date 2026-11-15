@@ -1,7 +1,15 @@
 import { FILTERS } from '../lib/filters.js'
 import FoodWeather from './FoodWeather.jsx'
 
-export default function Header({ filter, onFilterChange, onTogglePost, weather }) {
+export default function Header({
+  filter,
+  onFilterChange,
+  onTogglePost,
+  weather,
+  theme,
+  onToggleTheme,
+}) {
+  const isDark = theme === 'dark'
   return (
     <header className="header">
       <div className="header__brand">
@@ -20,9 +28,20 @@ export default function Header({ filter, onFilterChange, onTogglePost, weather }
           </button>
         ))}
       </nav>
-      <button onClick={onTogglePost} className="btn btn--green header__post">
-        Post leftovers
-      </button>
+      <div className="header__actions">
+        <button
+          type="button"
+          onClick={onToggleTheme}
+          className="btn theme-toggle"
+          aria-label={isDark ? 'Switch to day mode' : 'Switch to night mode'}
+          title={isDark ? 'Day mode' : 'Night mode'}
+        >
+          {isDark ? '☀️' : '🌙'}
+        </button>
+        <button onClick={onTogglePost} className="btn btn--green">
+          Post leftovers
+        </button>
+      </div>
     </header>
   )
 }

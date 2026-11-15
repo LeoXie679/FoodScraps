@@ -27,6 +27,7 @@ function buildItems(events, leftovers, now) {
     const ended = status.kind === 'ended'
     return {
       key: `event-${ev.id}`,
+      event: ev,
       emoji: foodEmoji(ev.food_desc),
       title: ev.title,
       location: ev.location_name,
@@ -55,6 +56,7 @@ export default function EventList({
   now,
   onSelect,
   onSelectFeed,
+  onShowFlyer,
   onPeekHeight,
 }) {
   const isSheet = mode === 'sheet'
@@ -231,6 +233,16 @@ export default function EventList({
                     </span>
                   </span>
                 </button>
+                {/* Sibling of the row button: buttons can't be nested. */}
+                {item.event && (
+                  <button
+                    type="button"
+                    className="link-button event-item__how"
+                    onClick={() => onShowFlyer(item.event)}
+                  >
+                    How we found this ✨
+                  </button>
+                )}
               </li>
             ))}
           </>

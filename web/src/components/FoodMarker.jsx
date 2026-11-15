@@ -33,7 +33,7 @@ function emojiIcon(emoji, variant) {
   return iconCache.get(key)
 }
 
-export function EventMarker({ event, now, ref }) {
+export function EventMarker({ event, now, onShowFlyer, ref }) {
   const status = eventStatus(event, now)
   return (
     <Marker
@@ -76,11 +76,20 @@ export function EventMarker({ event, now, ref }) {
               }}
             />
           )}
-          {event.source_url && (
-            <a href={event.source_url} target="_blank" rel="noreferrer">
-              source
-            </a>
-          )}
+          <div className="popup__links">
+            {event.source_url && (
+              <a href={event.source_url} target="_blank" rel="noreferrer">
+                source
+              </a>
+            )}
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => onShowFlyer(event)}
+            >
+              How we found this ✨
+            </button>
+          </div>
         </div>
       </Popup>
     </Marker>
