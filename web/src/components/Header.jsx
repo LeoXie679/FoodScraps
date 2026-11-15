@@ -1,9 +1,13 @@
 import { FILTERS } from '../lib/filters.js'
+import FoodWeather from './FoodWeather.jsx'
 
-export default function Header({ filter, onFilterChange, onTogglePost }) {
+export default function Header({ filter, onFilterChange, onTogglePost, weather }) {
   return (
     <header className="header">
-      <h1 className="header__title">Free Food Radar</h1>
+      <div className="header__brand">
+        <h1 className="header__title">Free Food Radar</h1>
+        <FoodWeather weather={weather} />
+      </div>
       <nav className="header__filters">
         {FILTERS.map((f) => (
           <button

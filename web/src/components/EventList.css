@@ -36,6 +36,45 @@
   margin: 0 auto 8px;
 }
 
+.event-list__tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 10px 6px;
+  flex-shrink: 0;
+}
+
+.event-list__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  min-height: 30px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.event-list__tab.is-active {
+  background: #202124;
+  border-color: #202124;
+  color: #fff;
+  font-weight: 600;
+}
+
+.event-list__count {
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #d93025;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 .event-list__items {
   position: relative; /* so item offsetTop is measured from the list */
   list-style: none;
@@ -60,7 +99,12 @@
 }
 
 .event-list--sidebar .event-list__header {
+  padding-bottom: 6px;
+}
+
+.event-list--sidebar .event-list__tabs {
   border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
 .event-list--sidebar .event-list__items {

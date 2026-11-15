@@ -45,6 +45,8 @@ export function normalizeEvent(raw) {
       confidence == null ? DEFAULT_CONFIDENCE : Math.min(1, Math.max(0, confidence)),
     source_url: toText(raw.source_url),
     image_url: toText(raw.image_url),
+    // Not sent by the API yet; the live feed uses it if the backend adds it.
+    created_at: toTime(raw.created_at),
   }
 }
 

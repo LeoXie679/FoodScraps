@@ -1,34 +1,38 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AttributionControl, MapContainer, TileLayer } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import './App.css'
 import Header from './components/Header.jsx'
 import EventList from './components/EventList.jsx'
+import ActivityTicker from './components/ActivityFeed.jsx'
 import PostLeftoversPanel from './components/PostLeftoversPanel.jsx'
 import { EventMarker, LeftoverMarker } from './components/FoodMarker.jsx'
-import { POLL_MS, USE_MOCK } from './config.js'
-import { fetchLiveData, getInitialData } from './lib/api.js'
 import { eventMatches, isDietFilter, leftoverMatches } from './lib/filters.js'
 import { withMapOffsets } from './lib/spread.js'
+import { computeWeather } from './lib/weather.js'
+import { buildFeed } from './lib/feed.js'
 import { useNow } from './hooks/useNow.js'
 import { useMediaQuery } from './hooks/useMediaQuery.js'
+import { useLiveData } from './hooks/useLiveData.js'
 
-// USE_MOCK and API_BASE live in ./config.js; data loading is in ./lib/api.js.
+// USE_MOCK, API_BASE and POLL_MS live in ./config.js; fetching and field
+// mapping are in ./lib/api.js; polling is in ./hooks/useLiveData.js.
 
 const UCSD_CENTER = [32.8801, -117.234]
-const initialData = getInitialData()
 
 export default function App() {
   const now = useNow(30000)
   const isDesktop = useMediaQuery('(min-width: 769px)')
 
   const [filter, setFilter] = useState('all')
-  const [events, setEvents] = useState(initialData.events)
-  const [leftovers, setLeftovers] = useState(initialData.leftovers)
   const [showPanel, setShowPanel] = useState(false)
   const [toast, setToast] = useState('')
   const [focusKey, setFocusKey] = useState(null)
   const [map, setMap] = useState(null)
+
+  const { events, leftovers, setLeftovers, detectedAt } = useLiveData({
+    onError: setToast,
+  })
 
   const markers = useRef({})
   const sheetPeek = useRef(0)
@@ -43,33 +47,13 @@ export default function App() {
   const mapEvents = withMapOffsets(visibleEvents)
   const mapLeftovers = withMapOffsets(visibleLeftovers)
 
-  // Load live data and poll every POLL_MS. Only toast when the API first
-  // fails (not on every failed poll), so an outage doesn't spam the user.
-  useEffect(() => {
-    if (USE_MOCK) return
-    let cancelled = false
-    let failing = false
-    async function load() {
-      try {
-        const data = await fetchLiveData()
-        if (cancelled) return
-        failing = false
-        setEvents(data.events)
-        setLeftovers(data.leftovers)
-      } catch (err) {
-        console.error(err)
-        if (cancelled || failing) return
-        failing = true
-        setToast('Could not load live data — is the API running?')
-      }
-    }
-    load()
-    const id = setInterval(load, POLL_MS)
-    return () => {
-      cancelled = true
-      clearInterval(id)
-    }
-  }, [])
+  // Weather and feed look at all data, not just the active filter.
+  const activeLeftovers = leftovers.filter((lo) => leftoverMatches(lo, 'all', now))
+  const weather = computeWeather(events, activeLeftovers, now)
+  const feed = useMemo(
+    () => buildFeed(events, leftovers, detectedAt, now),
+    [events, leftovers, detectedAt, now],
+  )
 
   const registerMarker = (key) => (el) => {
     if (el) markers.current[key] = el
@@ -104,12 +88,25 @@ export default function App() {
     [map, isDesktop],
   )
 
-  // A just-posted leftover needs one render before its marker exists.
+  // Feed items can point at pins the current filter hides: switch to "all"
+  // and fly once the pin has rendered.
+  function handleSelectFeed(item) {
+    if (!item.hasPin) return
+    if (markers.current[item.markerKey]) {
+      flyToMarker(item.markerKey)
+    } else {
+      setFilter('all')
+      setFocusKey(item.markerKey)
+    }
+  }
+
+  // A pin that isn't on the map yet (just posted, or hidden by a filter)
+  // needs one render before its marker exists.
   useEffect(() => {
     if (focusKey == null || !markers.current[focusKey]) return
     flyToMarker(focusKey)
     setFocusKey(null)
-  }, [focusKey, flyToMarker, leftovers])
+  }, [focusKey, flyToMarker, leftovers, filter])
 
   // The map container changes size when switching sidebar <-> bottom sheet.
   useEffect(() => {
@@ -139,8 +136,10 @@ export default function App() {
       mode={isDesktop ? 'sidebar' : 'sheet'}
       events={visibleEvents}
       leftovers={visibleLeftovers}
+      feed={feed}
       now={now}
       onSelect={flyToMarker}
+      onSelectFeed={handleSelectFeed}
       onPeekHeight={handlePeekHeight}
     />
   )
@@ -151,7 +150,9 @@ export default function App() {
         filter={filter}
         onFilterChange={setFilter}
         onTogglePost={() => setShowPanel((s) => !s)}
+        weather={weather}
       />
+      <ActivityTicker items={feed} onSelect={handleSelectFeed} />
 
       <div className="app__body">
         {isDesktop && list}

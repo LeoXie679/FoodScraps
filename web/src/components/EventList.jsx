@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import TimeBadge from './TimeBadge.jsx'
+import { FeedItem, LiveDot } from './ActivityFeed.jsx'
 import { foodEmoji } from '../lib/food.js'
 import { eventStatus, formatCountdown } from '../lib/time.js'
 import './EventList.css'
@@ -43,15 +44,17 @@ function buildItems(events, leftovers, now) {
 }
 
 /**
- * List of food spots. mode="sheet" is a draggable mobile bottom sheet;
- * mode="sidebar" is a static desktop sidebar.
+ * List of food spots plus a "Live" activity tab. mode="sheet" is a draggable
+ * mobile bottom sheet; mode="sidebar" is a static desktop sidebar.
  */
 export default function EventList({
   mode,
   events,
   leftovers,
+  feed,
   now,
   onSelect,
+  onSelectFeed,
   onPeekHeight,
 }) {
   const isSheet = mode === 'sheet'
@@ -62,31 +65,31 @@ export default function EventList({
   const spots = items.filter((i) => !i.ended).length
   const summary = `${spots} ${spots === 1 ? 'spot' : 'spots'} with free food`
 
+  const [tab, setTab] = useState('spots')
   const [expanded, setExpanded] = useState(false)
   const [dragY, setDragY] = useState(null)
   const [peek, setPeek] = useState(160)
   const drag = useRef(null)
-  const headerRef = useRef(null)
   const listRef = useRef(null)
 
-  // Collapsed height = header + the first two items.
+  // Collapsed height = everything above the list + its first two rows.
   useLayoutEffect(() => {
     if (!isSheet) return
     const measure = () => {
-      const header = headerRef.current
       const list = listRef.current
-      if (!header || !list) return
+      if (!list) return
       const last = list.children[Math.min(1, list.children.length - 1)]
-      const h = header.offsetHeight + (last ? last.offsetTop + last.offsetHeight + 8 : 0)
+      const h =
+        list.offsetTop + (last ? last.offsetTop + last.offsetHeight + 8 : 0)
       setPeek(h)
       onPeekHeight?.(h)
     }
     measure()
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
-  }, [isSheet, items, onPeekHeight])
+  }, [isSheet, items, feed, tab, onPeekHeight])
 
-  // When collapsing, scroll back so the top two items are what peeks out.
+  // When collapsing, scroll back so the top two rows are what peeks out.
   useEffect(() => {
     if (!expanded && listRef.current) listRef.current.scrollTop = 0
   }, [expanded])
@@ -130,6 +133,11 @@ export default function EventList({
     onSelect(key)
   }
 
+  function handleSelectFeed(item) {
+    if (isSheet) setExpanded(false)
+    onSelectFeed(item)
+  }
+
   let sheetStyle
   if (isSheet) {
     const base = expanded ? '0px' : `calc(100% - ${peek}px)`
@@ -150,7 +158,6 @@ export default function EventList({
     >
       {isSheet ? (
         <div
-          ref={headerRef}
           className="event-list__header event-list__header--drag"
           role="button"
           tabIndex={0}
@@ -165,40 +172,85 @@ export default function EventList({
           <strong>{summary}</strong>
         </div>
       ) : (
-        <div ref={headerRef} className="event-list__header">
+        <div className="event-list__header">
           <strong>{summary}</strong>
         </div>
       )}
 
-      <ul ref={listRef} className="event-list__items">
-        {items.length === 0 && (
-          <li className="event-list__empty">Nothing matches this filter.</li>
-        )}
-        {items.map((item) => (
-          <li key={item.key}>
-            <button
-              type="button"
-              className={`event-item${item.ended ? ' event-item--ended' : ''}`}
-              onClick={() => handleSelect(item.key)}
-            >
-              <span className="event-item__emoji" aria-hidden="true">
-                {item.emoji}
-              </span>
-              <span className="event-item__body">
-                <span className="event-item__title">{item.title}</span>
-                <span className="event-item__location">{item.location}</span>
-                <span className="event-item__meta">
-                  <TimeBadge kind={item.badge.kind} label={item.badge.label} />
-                  {item.tags.map((t) => (
-                    <span key={t} className="diet-tag">
-                      {t}
+      {/* Outside the drag area so taps on tabs aren't captured by the drag. */}
+      <div className="event-list__tabs" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === 'spots'}
+          className={`event-list__tab${tab === 'spots' ? ' is-active' : ''}`}
+          onClick={() => setTab('spots')}
+        >
+          Spots
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === 'live'}
+          className={`event-list__tab${tab === 'live' ? ' is-active' : ''}`}
+          onClick={() => setTab('live')}
+        >
+          <LiveDot withLabel={false} /> Live
+          {feed.length > 0 && (
+            <span className="event-list__count">{feed.length}</span>
+          )}
+        </button>
+      </div>
+
+      <ul ref={listRef} className="event-list__items" role="tabpanel">
+        {tab === 'spots' && (
+          <>
+            {items.length === 0 && (
+              <li className="event-list__empty">Nothing matches this filter.</li>
+            )}
+            {items.map((item) => (
+              <li key={item.key}>
+                <button
+                  type="button"
+                  className={`event-item${item.ended ? ' event-item--ended' : ''}`}
+                  onClick={() => handleSelect(item.key)}
+                >
+                  <span className="event-item__emoji" aria-hidden="true">
+                    {item.emoji}
+                  </span>
+                  <span className="event-item__body">
+                    <span className="event-item__title">{item.title}</span>
+                    <span className="event-item__location">{item.location}</span>
+                    <span className="event-item__meta">
+                      <TimeBadge kind={item.badge.kind} label={item.badge.label} />
+                      {item.tags.map((t) => (
+                        <span key={t} className="diet-tag">
+                          {t}
+                        </span>
+                      ))}
                     </span>
-                  ))}
-                </span>
-              </span>
-            </button>
-          </li>
-        ))}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </>
+        )}
+
+        {tab === 'live' && (
+          <>
+            {feed.length === 0 && (
+              <li className="event-list__empty">
+                No new activity yet. New leftovers and newly detected events
+                will show up here.
+              </li>
+            )}
+            {feed.map((item) => (
+              <li key={item.key}>
+                <FeedItem item={item} onSelect={handleSelectFeed} />
+              </li>
+            ))}
+          </>
+        )}
       </ul>
     </section>
   )

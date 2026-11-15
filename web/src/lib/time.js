@@ -67,6 +67,24 @@ export function eventStatus(ev, now) {
   return { kind: 'later', label: `${day} ${clock}` }
 }
 
+/** "9 PM" style hour label. */
+export function formatHour(date) {
+  return date.toLocaleTimeString(undefined, { hour: 'numeric' })
+}
+
+/** "just now" / "4 min ago" / "2 h ago" / "Nov 12". Future times count as now. */
+export function formatAgo(ts, now) {
+  const mins = Math.floor((now - new Date(ts)) / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return `${mins} min ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours} h ago`
+  return new Date(ts).toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
 /** "Gone in 1h 12m" style countdown to a leftover's expiry. */
 export function formatCountdown(expiresAt, now) {
   if (!expiresAt) return 'Expiry unknown'
