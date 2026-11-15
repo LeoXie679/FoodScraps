@@ -35,9 +35,13 @@ def extract_event(image_input, caption="", mime_type=None):
 
     image_uri = f"data:{mime_type};base64,{image_data}"
 
+    # Help the model resolve weekday/month captions into ISO dates.
+    today = __import__("datetime").date.today().isoformat()
+
     prompt = f"""
 Read this UC San Diego event flyer and extract its information.
 
+Today's date (Pacific): {today}
 Caption: {caption}
 
 Return ONLY one valid JSON object with exactly these fields:
@@ -58,14 +62,15 @@ Return ONLY one valid JSON object with exactly these fields:
 
 Rules:
 - Copy the event title exactly as written on the flyer. Do not paraphrase, shorten, or rename it.
-- has_food is true ONLY if the flyer or caption explicitly mentions food, meals, snacks, refreshments, or specific food items being offered.
+- has_food is true ONLY if the flyer or caption explicitly mentions food, meals, snacks, refreshments, hot cocoa, or specific food items being offered.
 - Do not assume an event has food because it is a social, cultural, career, or campus event.
 - If food is not explicitly mentioned, set has_food to false and food to null.
 - Reject non-food events by setting is_event to false when no food is explicitly mentioned.
 - Only list dietary restrictions or labels explicitly stated on the flyer or caption. Otherwise return [].
 - Never invent dates, times, locations, organizations, food descriptions, or dietary information.
 - Use null for unknown information.
-- Preserve the exact event date and time shown on the flyer.
+- date MUST be YYYY-MM-DD. If the flyer/caption has a weekday + month/day (e.g. "Thursday, November 19" or "Nov 17"), convert it using today's date above to pick the correct year. Only use null if no calendar date appears at all.
+- start/end MUST be 24-hour HH:MM (e.g. 4pm → 16:00).
 - Confidence must be between 0 and 1.
 - Return JSON only. No markdown or explanations.
 """

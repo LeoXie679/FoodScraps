@@ -307,13 +307,14 @@ def process_new_posts():
         results = {
             "processed": 0,
             "not_food": 0,
+            "no_date": 0,
             "duplicate": 0,
             "failed": 0,
         }
 
         for post in posts:
             status = process_post(conn, s3, post)
-            results[status] += 1
+            results[status] = results.get(status, 0) + 1
 
     return {
         "total": len(posts),
