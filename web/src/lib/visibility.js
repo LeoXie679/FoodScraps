@@ -1,4 +1,9 @@
-import { CAMPUS_BOUNDS, STALE_AFTER_MS } from '../config.js'
+import {
+  CAMPUS_BOUNDS,
+  HIDDEN_EVENT_IDS,
+  HIDDEN_SOURCE_PATTERN,
+  STALE_AFTER_MS,
+} from '../config.js'
 import { eventTimes } from './time.js'
 
 export function isOnCampus(x) {
@@ -9,11 +14,14 @@ export function isOnCampus(x) {
 
 /**
  * Why an event is hidden, or null if it's shown.
- * 'zero-confidence' | 'stale' | 'unplaced' (no coordinates) | 'off-campus'
- * Freshness is checked first so the "off-campus or unplaced" count only
+ * 'hidden-id' | 'test-source' | 'zero-confidence' | 'stale' |
+ * 'unplaced' (no coordinates) | 'off-campus'
+ * Location is checked last so the "off-campus or unplaced" count only
  * includes events that would otherwise have been shown.
  */
 export function eventHiddenReason(ev, now) {
+  if (HIDDEN_EVENT_IDS.has(Number(ev.id))) return 'hidden-id'
+  if (ev.source_url && HIDDEN_SOURCE_PATTERN.test(ev.source_url)) return 'test-source'
   // A missing confidence is normalized to 0.7, so 0 here really means 0.
   if (ev.confidence === 0) return 'zero-confidence'
   const { end } = eventTimes(ev) // no end_time → start + 2h

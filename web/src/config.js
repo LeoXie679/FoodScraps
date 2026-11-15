@@ -22,6 +22,21 @@ export const CAMPUS_BOUNDS = {
 // Events that ended more than this long ago are hidden everywhere.
 export const STALE_AFTER_MS = 3 * 60 * 60 * 1000
 
+// Live events that pass every rule but aren't real free food (checked by
+// hand on Nov 15). Remove ids once the backend stops producing them.
+// Note: ids change if the pipeline deletes and re-inserts events.
+export const HIDDEN_EVENT_IDS = new Set([
+  // "friends giving": HDH Friendsgiving is a paid dining-hall menu, split
+  // into one pin per hall (64 Degrees, Pines, Sixth, Ventanas, OceanView,
+  // Canyon Vista).
+  34, 35, 36, 37, 38, 39,
+  31, // COMMUNITY POTLUCK: "Bring a dish", not food being given out
+  32, // VSA gbM #4 GIVING THANKS: "ENTRY: $10"
+])
+
+// Test/diagnostic rows (e.g. https://example.com/malk-hall-diag-2).
+export const HIDDEN_SOURCE_PATTERN = /example\.com/i
+
 // ?admin=1 shows the hidden "⚙️ Pipeline" demo panel. It still needs the
 // admin token, which the user types in; nothing secret lives in the code.
 export const ADMIN_MODE = params.get('admin') === '1'
