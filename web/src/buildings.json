@@ -2,6 +2,21 @@
   "note": "Synced from infra/seed_buildings.sql / live buildings table. Coords are approximate.",
   "buildings": [
     {
+      "name": "64 Degrees",
+      "aliases": [
+        "64\u00b0",
+        "64 Degrees Dining",
+        "Sixty Four Degrees",
+        "64 Degrees Revelle",
+        "Revelle Dining",
+        "Revelle Dining Hall",
+        "Umi",
+        "Umi Sushi"
+      ],
+      "lat": 32.8747,
+      "lng": -117.2406
+    },
+    {
       "name": "Applied Physics and Mathematics",
       "aliases": [
         "APM",
@@ -18,6 +33,17 @@
       ],
       "lat": 32.8824,
       "lng": -117.2346
+    },
+    {
+      "name": "Audrey's Cafe",
+      "aliases": [
+        "Audrey's",
+        "Audreys Cafe",
+        "Audrey's Caf\u00e9",
+        "Audreys"
+      ],
+      "lat": 32.8793,
+      "lng": -117.2359
     },
     {
       "name": "Bear Room",
@@ -44,15 +70,17 @@
       "lng": -117.2405
     },
     {
-      "name": "CSE Building",
+      "name": "Canyon Vista Marketplace",
       "aliases": [
-        "CSE",
-        "EBU3B",
-        "Computer Science",
-        "Computer Science and Engineering"
+        "Canyon Vista",
+        "Canyon Vista Dining",
+        "Canyon Vista Dining Hall",
+        "CV Marketplace",
+        "Warren Dining",
+        "Warren Dining Hall"
       ],
       "lat": 32.8818,
-      "lng": -117.2335
+      "lng": -117.2348
     },
     {
       "name": "Canyonview Aquatic Center",
@@ -72,6 +100,18 @@
       "lng": -117.2412
     },
     {
+      "name": "Cecil's at Faculty Club",
+      "aliases": [
+        "Cecil's",
+        "Cecils",
+        "Cecil's Cafe",
+        "Cecils Cafe",
+        "Cecil's Faculty Club"
+      ],
+      "lat": 32.8788,
+      "lng": -117.2378
+    },
+    {
       "name": "Center Hall",
       "aliases": [
         "Center",
@@ -79,6 +119,16 @@
       ],
       "lat": 32.8775,
       "lng": -117.2373
+    },
+    {
+      "name": "Club Med",
+      "aliases": [
+        "Club Med Dining",
+        "School of Medicine Dining",
+        "SOM Dining"
+      ],
+      "lat": 32.8756,
+      "lng": -117.2338
     },
     {
       "name": "Cognitive Science Building",
@@ -114,6 +164,17 @@
       ],
       "lat": 32.8797,
       "lng": -117.2366
+    },
+    {
+      "name": "CSE Building",
+      "aliases": [
+        "CSE",
+        "EBU3B",
+        "Computer Science",
+        "Computer Science and Engineering"
+      ],
+      "lat": 32.8818,
+      "lng": -117.2335
     },
     {
       "name": "Dance Studio",
@@ -152,16 +213,6 @@
       "lng": -117.235
     },
     {
-      "name": "ERC",
-      "aliases": [
-        "Eleanor Roosevelt College",
-        "Roosevelt College",
-        "Roosevelt"
-      ],
-      "lat": 32.8852,
-      "lng": -117.2425
-    },
-    {
       "name": "Eighth College",
       "aliases": [
         "Eighth",
@@ -180,6 +231,16 @@
       "lng": -117.2368
     },
     {
+      "name": "ERC",
+      "aliases": [
+        "Eleanor Roosevelt College",
+        "Roosevelt College",
+        "Roosevelt"
+      ],
+      "lat": 32.8852,
+      "lng": -117.2425
+    },
+    {
       "name": "Faculty Club",
       "aliases": [
         "Ida and Cecil Green Faculty Club",
@@ -187,6 +248,17 @@
       ],
       "lat": 32.8788,
       "lng": -117.2378
+    },
+    {
+      "name": "Foodworx",
+      "aliases": [
+        "Food Works",
+        "Foodworx Dining",
+        "Foodworx Pepper Canyon",
+        "Matthews Foodworx"
+      ],
+      "lat": 32.8779,
+      "lng": -117.2355
     },
     {
       "name": "Franklin Antonio Hall",
@@ -225,6 +297,18 @@
       ],
       "lat": 32.8811,
       "lng": -117.2376
+    },
+    {
+      "name": "Goody's Marketplace",
+      "aliases": [
+        "Goody's",
+        "Goodys",
+        "Goody's Place",
+        "Goodys Marketplace",
+        "Goody's Market"
+      ],
+      "lat": 32.8812,
+      "lng": -117.2412
     },
     {
       "name": "Governance Chambers",
@@ -296,6 +380,15 @@
       ],
       "lat": 32.883,
       "lng": -117.2415
+    },
+    {
+      "name": "John's Market",
+      "aliases": [
+        "Johns Market",
+        "John's Market Muir"
+      ],
+      "lat": 32.8783,
+      "lng": -117.2409
     },
     {
       "name": "Ledden Auditorium",
@@ -414,6 +507,21 @@
       "lng": -117.2418
     },
     {
+      "name": "OceanView",
+      "aliases": [
+        "Ocean View",
+        "OceanView Terrace",
+        "Ocean View Terrace",
+        "OVT",
+        "OceanView Dining",
+        "Ocean View Dining",
+        "Marshall Dining",
+        "Marshall Dining Hall"
+      ],
+      "lat": 32.8805,
+      "lng": -117.2408
+    },
+    {
       "name": "Pacific Hall",
       "aliases": [
         "Pacific"
@@ -439,6 +547,19 @@
       ],
       "lat": 32.88,
       "lng": -117.2348
+    },
+    {
+      "name": "Pines",
+      "aliases": [
+        "Pines Dining",
+        "Pines Dining Hall",
+        "Muir Dining",
+        "Muir Dining Hall",
+        "Slice at Pines",
+        "Pines Restaurant"
+      ],
+      "lat": 32.8787,
+      "lng": -117.2407
     },
     {
       "name": "Podemos",
@@ -525,24 +646,6 @@
       "lng": -117.237
     },
     {
-      "name": "RIMAC",
-      "aliases": [
-        "RIMAC Arena",
-        "RIMAC Field",
-        "RIMAC Arena Annex"
-      ],
-      "lat": 32.8855,
-      "lng": -117.2397
-    },
-    {
-      "name": "RIMAC Meeting Rooms",
-      "aliases": [
-        "RIMAC Annex"
-      ],
-      "lat": 32.8856,
-      "lng": -117.2395
-    },
-    {
       "name": "Rady School of Management",
       "aliases": [
         "Rady",
@@ -558,6 +661,26 @@
       ],
       "lat": 32.8798,
       "lng": -117.2363
+    },
+    {
+      "name": "Restaurants at Sixth College",
+      "aliases": [
+        "Sixth College Dining",
+        "Sixth Dining",
+        "Sixth Dining Hall",
+        "Restaurants at Sixth",
+        "Restaurants at Sixth College",
+        "Wolftown",
+        "Wolf Town",
+        "Wolftown Latin",
+        "Wolftown Street",
+        "Makai",
+        "Crave at Sixth",
+        "Rooftop at Sixth",
+        "Noodles at Sixth"
+      ],
+      "lat": 32.8825,
+      "lng": -117.2416
     },
     {
       "name": "Revelle College Room",
@@ -587,6 +710,24 @@
       "lng": -117.2408
     },
     {
+      "name": "RIMAC",
+      "aliases": [
+        "RIMAC Arena",
+        "RIMAC Field",
+        "RIMAC Arena Annex"
+      ],
+      "lat": 32.8855,
+      "lng": -117.2397
+    },
+    {
+      "name": "RIMAC Meeting Rooms",
+      "aliases": [
+        "RIMAC Annex"
+      ],
+      "lat": 32.8856,
+      "lng": -117.2395
+    },
+    {
       "name": "Robinson Auditorium",
       "aliases": [
         "Robinson",
@@ -594,6 +735,16 @@
       ],
       "lat": 32.8845,
       "lng": -117.241
+    },
+    {
+      "name": "Rogers Market",
+      "aliases": [
+        "Roger's Market",
+        "Roger's",
+        "Rogers Community Market"
+      ],
+      "lat": 32.8744,
+      "lng": -117.2409
     },
     {
       "name": "Roosevelt College Room",
@@ -605,13 +756,13 @@
       "lng": -117.2367
     },
     {
-      "name": "SSC Multipurpose Room",
+      "name": "Roots",
       "aliases": [
-        "SSC MPR",
-        "Student Services Multipurpose Room"
+        "Roots at Muir",
+        "Muir Roots"
       ],
-      "lat": 32.87865,
-      "lng": -117.2351
+      "lat": 32.8785,
+      "lng": -117.241
     },
     {
       "name": "San Diego Supercomputer Center",
@@ -640,6 +791,17 @@
       "lng": -117.2425
     },
     {
+      "name": "Seventh Market",
+      "aliases": [
+        "The Market @ Seventh College",
+        "Market at Seventh",
+        "7th Market",
+        "Seventh Market Coffeehouse"
+      ],
+      "lat": 32.8837,
+      "lng": -117.242
+    },
+    {
       "name": "Sixth College",
       "aliases": [
         "Sixth",
@@ -658,6 +820,16 @@
       "lng": -117.2358
     },
     {
+      "name": "Sixth Market",
+      "aliases": [
+        "6th Market",
+        "Market at Sixth",
+        "Sixth College Market"
+      ],
+      "lat": 32.8824,
+      "lng": -117.2414
+    },
+    {
       "name": "Social Sciences Building",
       "aliases": [
         "SSB",
@@ -674,6 +846,15 @@
       ],
       "lat": 32.881,
       "lng": -117.2338
+    },
+    {
+      "name": "SSC Multipurpose Room",
+      "aliases": [
+        "SSC MPR",
+        "Student Services Multipurpose Room"
+      ],
+      "lat": 32.87865,
+      "lng": -117.2351
     },
     {
       "name": "Structural and Materials Engineering",
@@ -734,6 +915,27 @@
       ],
       "lat": 32.8798,
       "lng": -117.2364
+    },
+    {
+      "name": "Sunshine Market",
+      "aliases": [
+        "Sunshine Market Price Center",
+        "Sunshine Market PC"
+      ],
+      "lat": 32.8796,
+      "lng": -117.2363
+    },
+    {
+      "name": "The Bistro",
+      "aliases": [
+        "Bistro",
+        "Seventh Dining",
+        "Seventh College Dining",
+        "Seventh Dining Hall",
+        "The Bistro Seventh"
+      ],
+      "lat": 32.8836,
+      "lng": -117.2422
     },
     {
       "name": "The Forum",
@@ -805,6 +1007,20 @@
       ],
       "lat": 32.8794,
       "lng": -117.2362
+    },
+    {
+      "name": "Ventanas",
+      "aliases": [
+        "Cafe Ventanas",
+        "Caf\u00e9 Ventanas",
+        "Ventanas Dining",
+        "Ventanas Dining Hall",
+        "ERC Dining",
+        "ERC Dining Hall",
+        "Roosevelt Dining"
+      ],
+      "lat": 32.885,
+      "lng": -117.2422
     },
     {
       "name": "Warren College",
