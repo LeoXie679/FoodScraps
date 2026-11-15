@@ -134,6 +134,14 @@ def process_post(conn, s3, post):
                 )
             conn.commit()
             return "not_food"
+        if not result.date:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "UPDATE raw_posts SET status = 'no_date' WHERE id = %s",
+                    (post_id,),
+                )
+            conn.commit()
+            return "no_date"
 
         if not result.title:
             raise ValueError("Event has no title")
