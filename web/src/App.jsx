@@ -6,7 +6,7 @@ import Header from './components/Header.jsx'
 import EventList from './components/EventList.jsx'
 import PostLeftoversPanel from './components/PostLeftoversPanel.jsx'
 import { EventMarker, LeftoverMarker } from './components/FoodMarker.jsx'
-import { USE_MOCK } from './config.js'
+import { POLL_MS, USE_MOCK } from './config.js'
 import { fetchLiveData, getInitialData } from './lib/api.js'
 import { eventMatches, isDietFilter, leftoverMatches } from './lib/filters.js'
 import { withMapOffsets } from './lib/spread.js'
@@ -16,7 +16,6 @@ import { useMediaQuery } from './hooks/useMediaQuery.js'
 // USE_MOCK and API_BASE live in ./config.js; data loading is in ./lib/api.js.
 
 const UCSD_CENTER = [32.8801, -117.234]
-const POLL_MS = 30000
 const initialData = getInitialData()
 
 export default function App() {
@@ -44,20 +43,24 @@ export default function App() {
   const mapEvents = withMapOffsets(visibleEvents)
   const mapLeftovers = withMapOffsets(visibleLeftovers)
 
-  // Load live data and keep it fresh.
+  // Load live data and poll every POLL_MS. Only toast when the API first
+  // fails (not on every failed poll), so an outage doesn't spam the user.
   useEffect(() => {
     if (USE_MOCK) return
     let cancelled = false
+    let failing = false
     async function load() {
       try {
         const data = await fetchLiveData()
-        if (!cancelled) {
-          setEvents(data.events)
-          setLeftovers(data.leftovers)
-        }
+        if (cancelled) return
+        failing = false
+        setEvents(data.events)
+        setLeftovers(data.leftovers)
       } catch (err) {
         console.error(err)
-        if (!cancelled) setToast('Could not load live data — is the API running?')
+        if (cancelled || failing) return
+        failing = true
+        setToast('Could not load live data — is the API running?')
       }
     }
     load()
@@ -120,11 +123,14 @@ export default function App() {
   }, [toast])
 
   function handlePosted(leftover) {
-    setLeftovers((prev) => [...prev, leftover])
+    // Replace rather than duplicate if a poll already brought it in.
+    setLeftovers((prev) => [...prev.filter((l) => l.id !== leftover.id), leftover])
     setShowPanel(false)
     // Diet filters hide leftovers, so switch back to "all" so the new pin shows.
     if (isDietFilter(filter)) setFilter('all')
-    setFocusKey(`leftover-${leftover.id}`)
+    if (leftover.lat != null && leftover.lng != null) {
+      setFocusKey(`leftover-${leftover.id}`)
+    }
     setToast('Posted! Students nearby can see it now')
   }
 

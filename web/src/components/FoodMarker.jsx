@@ -45,15 +45,17 @@ export function EventMarker({ event, now, ref }) {
       <Popup>
         <div className="popup">
           <strong>{event.title}</strong>
-          <div>{event.org}</div>
-          <div>{event.location_name}</div>
+          {event.org && <div>{event.org}</div>}
+          {event.location_name && <div>{event.location_name}</div>}
           <div>{formatTimeRange(event.start_time, event.end_time)}</div>
           <div>
             <TimeBadge kind={status.kind} label={status.label} />
           </div>
-          <div>
-            {foodEmoji(event.food_desc)} {event.food_desc}
-          </div>
+          {event.food_desc && (
+            <div>
+              {foodEmoji(event.food_desc)} {event.food_desc}
+            </div>
+          )}
           {event.dietary?.length > 0 && (
             <div className="popup__tags">
               {event.dietary.map((d) => (
@@ -68,6 +70,10 @@ export function EventMarker({ event, now, ref }) {
               src={event.image_url}
               alt={`${event.title} flyer`}
               className="popup__flyer"
+              // Signed flyer URLs expire after 6h; hide the image if it fails.
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
             />
           )}
           {event.source_url && (
@@ -101,9 +107,11 @@ export function LeftoverMarker({ leftover, now, ref }) {
               label={formatCountdown(leftover.expires_at, now)}
             />
           </div>
-          <div className="popup__muted">
-            Expires {formatTime(leftover.expires_at)}
-          </div>
+          {leftover.expires_at && (
+            <div className="popup__muted">
+              Expires {formatTime(leftover.expires_at)}
+            </div>
+          )}
         </div>
       </Popup>
     </Marker>

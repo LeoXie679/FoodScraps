@@ -12,9 +12,22 @@ export function formatTime(t) {
 }
 
 export function formatTimeRange(start, end) {
+  if (!start) return 'Time not listed'
   const s = new Date(start)
-  const e = new Date(end)
-  return `${s.toLocaleDateString(undefined, dateFmt)}, ${formatClock(s)} – ${formatClock(e)}`
+  const day = `${s.toLocaleDateString(undefined, dateFmt)}, ${formatClock(s)}`
+  return end ? `${day} – ${formatClock(new Date(end))}` : day
+}
+
+const ASSUMED_DURATION_MS = 2 * 60 * 60 * 1000
+
+/** Start/end as Dates. No end → start + 2h. No start → both null. */
+export function eventTimes(ev) {
+  if (!ev.start_time) return { start: null, end: null }
+  const start = new Date(ev.start_time)
+  const end = ev.end_time
+    ? new Date(ev.end_time)
+    : new Date(start.getTime() + ASSUMED_DURATION_MS)
+  return { start, end }
 }
 
 export function isSameDay(a, b) {
@@ -31,11 +44,11 @@ function startOfDay(d) {
 
 /**
  * Where an event is in time, as { kind, label }.
- * kind: 'now' | 'soon' | 'later' | 'ended'
+ * kind: 'now' | 'soon' | 'later' | 'ended' | 'unknown'
  */
 export function eventStatus(ev, now) {
-  const start = new Date(ev.start_time)
-  const end = new Date(ev.end_time)
+  const { start, end } = eventTimes(ev)
+  if (!start) return { kind: 'unknown', label: 'Time not listed' }
 
   if (now > end) return { kind: 'ended', label: 'Ended – food probably gone' }
   if (now >= start) return { kind: 'now', label: 'Happening now' }
@@ -56,6 +69,7 @@ export function eventStatus(ev, now) {
 
 /** "Gone in 1h 12m" style countdown to a leftover's expiry. */
 export function formatCountdown(expiresAt, now) {
+  if (!expiresAt) return 'Expiry unknown'
   const ms = new Date(expiresAt) - now
   if (ms <= 0) return 'Gone'
   const totalMin = Math.floor(ms / 60000)

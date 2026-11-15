@@ -19,7 +19,7 @@ function buildItems(events, leftovers, now) {
     tags: ['leftovers'],
     ended: false,
     rank: 0,
-    sortTime: new Date(lo.expires_at).getTime(),
+    sortTime: lo.expires_at ? new Date(lo.expires_at).getTime() : Infinity,
   }))
   const eventItems = events.map((ev) => {
     const status = eventStatus(ev, now)
@@ -33,7 +33,8 @@ function buildItems(events, leftovers, now) {
       tags: ev.dietary || [],
       ended,
       rank: ended ? 2 : 1,
-      sortTime: new Date(ev.start_time).getTime(),
+      // No listed time → after timed upcoming events, before ended ones.
+      sortTime: ev.start_time ? new Date(ev.start_time).getTime() : Infinity,
     }
   })
   return [...leftoverItems, ...eventItems].sort(

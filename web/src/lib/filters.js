@@ -1,4 +1,4 @@
-import { isSameDay } from './time.js'
+import { eventTimes, isSameDay } from './time.js'
 
 export const FILTERS = ['all', 'now', 'today', 'vegetarian', 'halal']
 
@@ -7,13 +7,13 @@ export function isDietFilter(filter) {
 }
 
 export function eventMatches(ev, filter, now) {
-  const start = new Date(ev.start_time)
-  const end = new Date(ev.end_time)
+  const { start, end } = eventTimes(ev)
   switch (filter) {
+    // Events with no listed time can't be "now" or "today".
     case 'now':
-      return start <= now && now <= end
+      return start != null && start <= now && now <= end
     case 'today':
-      return isSameDay(start, now) && end >= now
+      return start != null && isSameDay(start, now) && end >= now
     case 'vegetarian':
     case 'halal':
       return (ev.dietary || []).includes(filter)
@@ -25,5 +25,6 @@ export function eventMatches(ev, filter, now) {
 // Leftovers have no dietary info, so they're hidden under the diet filters.
 export function leftoverMatches(lo, filter, now) {
   if (isDietFilter(filter)) return false
-  return new Date(lo.expires_at) >= now
+  // No expiry from the API → trust that /leftovers/active only sends live ones.
+  return !lo.expires_at || new Date(lo.expires_at) >= now
 }
