@@ -57,7 +57,7 @@ export function buildFeed(events, leftovers, detectedAt, now) {
       key: `feed-event-${ev.id}`,
       markerKey: `event-${ev.id}`,
       hasPin: hasCoords(ev),
-      emoji: foodEmoji(ev.food_desc),
+      emoji: foodEmoji(ev.food_desc, ev.title),
       text,
       ago,
       ts,

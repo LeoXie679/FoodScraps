@@ -40,7 +40,7 @@ export function EventMarker({ event, now, onShowFlyer, onShare, ref }) {
     <Marker
       ref={ref}
       position={[event.mapLat ?? event.lat, event.mapLng ?? event.lng]}
-      icon={emojiIcon(foodEmoji(event.food_desc), 'event')}
+      icon={emojiIcon(foodEmoji(event.food_desc, event.title), 'event')}
       opacity={0.35 + 0.65 * (event.confidence ?? 0)}
     >
       <Popup>
@@ -54,7 +54,7 @@ export function EventMarker({ event, now, onShowFlyer, onShare, ref }) {
           </div>
           {event.food_desc && (
             <div>
-              {foodEmoji(event.food_desc)} {event.food_desc}
+              {foodEmoji(event.food_desc, event.title)} {event.food_desc}
             </div>
           )}
           {event.dietary?.length > 0 && (

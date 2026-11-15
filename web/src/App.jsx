@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import L from 'leaflet'
 import { AttributionControl, MapContainer, TileLayer } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import MarkerClusterGroup from './components/MarkerClusterGroup.jsx'
 import './App.css'
 import Header from './components/Header.jsx'
 import EventList from './components/EventList.jsx'
@@ -30,19 +32,13 @@ function deepLinkMarkerKey() {
   return id ? `event-${id}` : null
 }
 
+// Night mode uses these same tiles, darkened with a CSS filter (index.css).
+const OSM_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 const OSM_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-const TILES = {
-  light: {
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: OSM_ATTRIBUTION,
-    subdomains: 'abc',
-  },
-  dark: {
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-    attribution: `${OSM_ATTRIBUTION} &copy; <a href="https://carto.com/attributions">CARTO</a>`,
-    subdomains: 'abcd',
-  },
+
+function hasCoords(x) {
+  return x.lat != null && x.lng != null
 }
 
 export default function App() {
@@ -52,13 +48,13 @@ export default function App() {
   const [filter, setFilter] = useState('all')
   const [showPanel, setShowPanel] = useState(false)
   const [toast, setToast] = useState('')
-  const [focusKey, setFocusKey] = useState(deepLinkMarkerKey)
+  const [initialDeepLink] = useState(deepLinkMarkerKey)
+  const [focusKey, setFocusKey] = useState(initialDeepLink)
   const [showWheel, setShowWheel] = useState(false)
   const [shareFallback, setShareFallback] = useState(null)
   const [map, setMap] = useState(null)
   const [flyerEvent, setFlyerEvent] = useState(null)
   const [theme, toggleTheme] = useTheme()
-  const tiles = TILES[theme]
   const closeFlyer = useCallback(() => setFlyerEvent(null), [])
   const closeWheel = useCallback(() => setShowWheel(false), [])
 
@@ -69,6 +65,8 @@ export default function App() {
   const markers = useRef({})
   const sheetPeek = useRef(0)
   const pendingOpen = useRef(null)
+  const clusterRef = useRef(null)
+  const didFitBounds = useRef(false)
 
   const visibleEvents = events.filter(
     (ev) => ev.has_food && eventMatches(ev, filter, now),
@@ -76,7 +74,10 @@ export default function App() {
   const visibleLeftovers = leftovers.filter((lo) =>
     leftoverMatches(lo, filter, now),
   )
-  const mapEvents = withMapOffsets(visibleEvents)
+  // Events overlap a lot (4 at Geisel) and go into the cluster group.
+  // Leftovers stay unclustered so their ring is always visible; the small
+  // spread keeps two at the same building from hiding each other.
+  const mapEvents = visibleEvents.filter(hasCoords)
   const mapLeftovers = withMapOffsets(visibleLeftovers)
 
   // Weather and feed look at all data, not just the active filter.
@@ -96,7 +97,9 @@ export default function App() {
     sheetPeek.current = h
   }, [])
 
-  // Fly to a marker and open its popup once the map stops moving.
+  // Fly to a marker and open its popup once the map stops moving. Event pins
+  // may still be inside a cluster then: zoomToShowLayer zooms in or
+  // spiderfies until the pin itself is on screen.
   const flyToMarker = useCallback(
     (key) => {
       const marker = markers.current[key]
@@ -111,7 +114,12 @@ export default function App() {
       if (pendingOpen.current) map.off('moveend', pendingOpen.current)
       const open = () => {
         pendingOpen.current = null
-        marker.openPopup()
+        const cluster = clusterRef.current
+        if (cluster?.hasLayer(marker)) {
+          cluster.zoomToShowLayer(marker, () => marker.openPopup())
+        } else {
+          marker.openPopup()
+        }
       }
       pendingOpen.current = open
       map.once('moveend', open)
@@ -151,6 +159,21 @@ export default function App() {
     setShowWheel(false)
     handleSelectFeed(item)
   }
+
+  // First time there are pins: fit the map to them (unless a ?event= link
+  // is about to fly somewhere). On phones, leave room for the bottom sheet.
+  useEffect(() => {
+    if (didFitBounds.current || !map) return
+    const points = [...mapEvents, ...mapLeftovers].map((x) => [x.lat, x.lng])
+    if (points.length === 0) return
+    didFitBounds.current = true
+    if (initialDeepLink) return
+    map.fitBounds(L.latLngBounds(points), {
+      paddingTopLeft: [40, 40],
+      paddingBottomRight: [40, 40 + (isDesktop ? 0 : sheetPeek.current)],
+      maxZoom: 17,
+    })
+  }, [map, mapEvents, mapLeftovers, isDesktop, initialDeepLink])
 
   // The map container changes size when switching sidebar <-> bottom sheet.
   useEffect(() => {
@@ -215,24 +238,20 @@ export default function App() {
           >
             {/* Top-right so the mobile bottom sheet doesn't cover it. */}
             <AttributionControl position="topright" />
-            {/* key={theme} remounts the layer so the attribution swaps too. */}
-            <TileLayer
-              key={theme}
-              url={tiles.url}
-              attribution={tiles.attribution}
-              subdomains={tiles.subdomains}
-            />
+            <TileLayer url={OSM_URL} attribution={OSM_ATTRIBUTION} />
 
-            {mapEvents.map((ev) => (
-              <EventMarker
-                key={`event-${ev.id}`}
-                ref={registerMarker(`event-${ev.id}`)}
-                event={ev}
-                now={now}
-                onShowFlyer={setFlyerEvent}
-                onShare={handleShare}
-              />
-            ))}
+            <MarkerClusterGroup ref={clusterRef}>
+              {mapEvents.map((ev) => (
+                <EventMarker
+                  key={`event-${ev.id}`}
+                  ref={registerMarker(`event-${ev.id}`)}
+                  event={ev}
+                  now={now}
+                  onShowFlyer={setFlyerEvent}
+                  onShare={handleShare}
+                />
+              ))}
+            </MarkerClusterGroup>
 
             {mapLeftovers.map((lo) => (
               <LeftoverMarker

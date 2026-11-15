@@ -66,6 +66,39 @@
   line-height: 1;
 }
 
+/* Below 1100px: icon-only "I'm hungry" button (aria-label/title keep the text). */
+@media (max-width: 1099px) {
+  .btn--hungry {
+    width: 36px;
+    padding: 0;
+    font-size: 1.05rem;
+  }
+  .btn__label {
+    display: none;
+  }
+}
+
+/* 900px+: keep the header on one line with smaller filter chips. */
+@media (min-width: 900px) {
+  .header {
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+  .header__filters {
+    flex-wrap: nowrap;
+    min-width: 0;
+    gap: 4px;
+  }
+  .header .chip {
+    padding: 4px 9px;
+    min-height: 28px;
+    font-size: 0.82rem;
+  }
+  .header__actions {
+    flex-shrink: 0;
+  }
+}
+
 /* ---- Buttons ---- */
 .btn {
   padding: 6px 12px;

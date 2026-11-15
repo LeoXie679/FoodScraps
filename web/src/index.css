@@ -98,6 +98,12 @@ a {
   background: #0b1226;
 }
 
+/* Night map: darken the normal OSM tiles. Only the tile pane is filtered,
+   so pins, clusters and popups keep their real colors. */
+:root[data-theme='dark'] .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(0.9);
+}
+
 :root[data-theme='dark'] .leaflet-popup-content-wrapper,
 :root[data-theme='dark'] .leaflet-popup-tip {
   background: var(--surface);

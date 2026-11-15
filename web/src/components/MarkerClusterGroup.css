@@ -1,0 +1,27 @@
+/* Count bubble for clustered event pins (matches the event pin style). */
+.food-cluster {
+  background: none;
+  border: none;
+}
+
+.food-cluster span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid var(--pin-event-border);
+  background: var(--pin-bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: var(--pin-event-glow);
+  outline: 4px solid color-mix(in srgb, var(--pin-event-border) 25%, transparent);
+}
+
+/* Spider legs when a stack of same-building events fans out. */
+.leaflet-cluster-spider-leg {
+  stroke: var(--pin-event-border);
+}

@@ -29,7 +29,7 @@ function buildItems(events, leftovers, now) {
     return {
       key: `event-${ev.id}`,
       event: ev,
-      emoji: foodEmoji(ev.food_desc),
+      emoji: foodEmoji(ev.food_desc, ev.title),
       title: ev.title,
       location: ev.location_name,
       badge: status,
@@ -240,12 +240,12 @@ export default function EventList({
                   <div className="event-item__actions">
                     <button
                       type="button"
-                      className="link-button"
+                      className="mini-link"
                       onClick={() => onShowFlyer(item.event)}
                     >
-                      How we found this ✨
+                      ✨ How we found this
                     </button>
-                    <EventActions event={item.event} onShare={onShare} />
+                    <EventActions event={item.event} onShare={onShare} variant="mini" />
                   </div>
                 )}
               </li>

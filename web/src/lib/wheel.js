@@ -18,7 +18,7 @@ function fromEvent(ev, now) {
     key: `event-${ev.id}`,
     markerKey: `event-${ev.id}`,
     hasPin: hasCoords(ev),
-    emoji: foodEmoji(ev.food_desc),
+    emoji: foodEmoji(ev.food_desc, ev.title),
     title: ev.title,
     short: shorten(ev.title),
     location: ev.location_name,

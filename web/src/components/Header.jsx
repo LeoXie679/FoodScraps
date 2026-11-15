@@ -39,8 +39,15 @@ export default function Header({
         >
           {isDark ? '☀️' : '🌙'}
         </button>
-        <button type="button" onClick={onOpenWheel} className="btn btn--hungry">
-          I’m hungry 🎰
+        <button
+          type="button"
+          onClick={onOpenWheel}
+          className="btn btn--hungry"
+          aria-label="I’m hungry: spin the food wheel"
+          title="I’m hungry: spin the food wheel"
+        >
+          {/* Label hides below 1100px; the 🎰 stays. */}
+          <span className="btn__label">I’m hungry </span>🎰
         </button>
         <button onClick={onTogglePost} className="btn btn--green">
           Post leftovers
