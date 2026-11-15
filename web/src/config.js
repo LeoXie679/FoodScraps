@@ -32,6 +32,11 @@ export const HIDDEN_EVENT_IDS = new Set([
   34, 35, 36, 37, 38, 39,
   31, // COMMUNITY POTLUCK: "Bring a dish", not food being given out
   32, // VSA gbM #4 GIVING THANKS: "ENTRY: $10"
+  // Food Co-op All You Care To Eat was Thu Nov 12; the pipeline misdated it
+  // from relative dates in the captions.
+  27, // "this thursday" (posted Nov 9) → dated Nov 19
+  28, // "tonight" (posted Nov 12) → dated Nov 15
+  26, // Triton Foodie cooking class: RSVP-only, limited spots
 ])
 
 // Test/diagnostic rows (e.g. https://example.com/malk-hall-diag-2).
