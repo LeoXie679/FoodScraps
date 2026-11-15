@@ -1,6 +1,7 @@
 import L from 'leaflet'
 import { Marker, Popup } from 'react-leaflet'
 import TimeBadge from './TimeBadge.jsx'
+import EventActions from './EventActions.jsx'
 import { foodEmoji } from '../lib/food.js'
 import {
   eventStatus,
@@ -33,7 +34,7 @@ function emojiIcon(emoji, variant) {
   return iconCache.get(key)
 }
 
-export function EventMarker({ event, now, onShowFlyer, ref }) {
+export function EventMarker({ event, now, onShowFlyer, onShare, ref }) {
   const status = eventStatus(event, now)
   return (
     <Marker
@@ -89,6 +90,7 @@ export function EventMarker({ event, now, onShowFlyer, ref }) {
             >
               How we found this ✨
             </button>
+            <EventActions event={event} onShare={onShare} />
           </div>
         </div>
       </Popup>

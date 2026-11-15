@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import TimeBadge from './TimeBadge.jsx'
 import { FeedItem, LiveDot } from './ActivityFeed.jsx'
+import EventActions from './EventActions.jsx'
 import { foodEmoji } from '../lib/food.js'
 import { eventStatus, formatCountdown } from '../lib/time.js'
 import './EventList.css'
@@ -57,6 +58,7 @@ export default function EventList({
   onSelect,
   onSelectFeed,
   onShowFlyer,
+  onShare,
   onPeekHeight,
 }) {
   const isSheet = mode === 'sheet'
@@ -233,15 +235,18 @@ export default function EventList({
                     </span>
                   </span>
                 </button>
-                {/* Sibling of the row button: buttons can't be nested. */}
+                {/* Siblings of the row button: buttons can't be nested. */}
                 {item.event && (
-                  <button
-                    type="button"
-                    className="link-button event-item__how"
-                    onClick={() => onShowFlyer(item.event)}
-                  >
-                    How we found this ✨
-                  </button>
+                  <div className="event-item__actions">
+                    <button
+                      type="button"
+                      className="link-button"
+                      onClick={() => onShowFlyer(item.event)}
+                    >
+                      How we found this ✨
+                    </button>
+                    <EventActions event={item.event} onShare={onShare} />
+                  </div>
                 )}
               </li>
             ))}

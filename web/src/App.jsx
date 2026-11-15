@@ -7,6 +7,8 @@ import EventList from './components/EventList.jsx'
 import ActivityTicker from './components/ActivityFeed.jsx'
 import PostLeftoversPanel from './components/PostLeftoversPanel.jsx'
 import FlyerModal from './components/FlyerModal.jsx'
+import FoodWheel from './components/FoodWheel.jsx'
+import { shareEvent } from './lib/share.js'
 import { EventMarker, LeftoverMarker } from './components/FoodMarker.jsx'
 import { eventMatches, isDietFilter, leftoverMatches } from './lib/filters.js'
 import { withMapOffsets } from './lib/spread.js'
@@ -21,6 +23,12 @@ import { useTheme } from './hooks/useTheme.js'
 // mapping are in ./lib/api.js; polling is in ./hooks/useLiveData.js.
 
 const UCSD_CENTER = [32.8801, -117.234]
+
+// Shared links look like ?event=<id>: fly to that pin once data loads.
+function deepLinkMarkerKey() {
+  const id = new URLSearchParams(window.location.search).get('event')
+  return id ? `event-${id}` : null
+}
 
 const OSM_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -44,12 +52,15 @@ export default function App() {
   const [filter, setFilter] = useState('all')
   const [showPanel, setShowPanel] = useState(false)
   const [toast, setToast] = useState('')
-  const [focusKey, setFocusKey] = useState(null)
+  const [focusKey, setFocusKey] = useState(deepLinkMarkerKey)
+  const [showWheel, setShowWheel] = useState(false)
+  const [shareFallback, setShareFallback] = useState(null)
   const [map, setMap] = useState(null)
   const [flyerEvent, setFlyerEvent] = useState(null)
   const [theme, toggleTheme] = useTheme()
   const tiles = TILES[theme]
   const closeFlyer = useCallback(() => setFlyerEvent(null), [])
+  const closeWheel = useCallback(() => setShowWheel(false), [])
 
   const { events, leftovers, setLeftovers, detectedAt } = useLiveData({
     onError: setToast,
@@ -121,13 +132,25 @@ export default function App() {
     }
   }
 
-  // A pin that isn't on the map yet (just posted, or hidden by a filter)
-  // needs one render before its marker exists.
+  // A pin that isn't on the map yet (just posted, hidden by a filter, or a
+  // ?event= link waiting for the first poll) needs a render before its
+  // marker exists.
   useEffect(() => {
     if (focusKey == null || !markers.current[focusKey]) return
     flyToMarker(focusKey)
     setFocusKey(null)
-  }, [focusKey, flyToMarker, leftovers, filter])
+  }, [focusKey, flyToMarker, events, leftovers, filter])
+
+  const handleShare = useCallback(async (ev) => {
+    const result = await shareEvent(ev)
+    if (result.status === 'copied') setToast('Link copied!')
+    else if (result.status === 'manual') setShareFallback(result)
+  }, [])
+
+  function handlePickFromWheel(item) {
+    setShowWheel(false)
+    handleSelectFeed(item)
+  }
 
   // The map container changes size when switching sidebar <-> bottom sheet.
   useEffect(() => {
@@ -162,6 +185,7 @@ export default function App() {
       onSelect={flyToMarker}
       onSelectFeed={handleSelectFeed}
       onShowFlyer={setFlyerEvent}
+      onShare={handleShare}
       onPeekHeight={handlePeekHeight}
     />
   )
@@ -175,6 +199,7 @@ export default function App() {
         weather={weather}
         theme={theme}
         onToggleTheme={toggleTheme}
+        onOpenWheel={() => setShowWheel(true)}
       />
       <ActivityTicker items={feed} onSelect={handleSelectFeed} />
 
@@ -205,6 +230,7 @@ export default function App() {
                 event={ev}
                 now={now}
                 onShowFlyer={setFlyerEvent}
+                onShare={handleShare}
               />
             ))}
 
@@ -227,16 +253,54 @@ export default function App() {
             />
           )}
 
-          {toast && (
-            <div className="toast" role="status">
-              {toast}
-            </div>
-          )}
         </div>
       </div>
 
       {flyerEvent && (
-        <FlyerModal key={flyerEvent.id} event={flyerEvent} onClose={closeFlyer} />
+        <FlyerModal
+          key={flyerEvent.id}
+          event={flyerEvent}
+          onClose={closeFlyer}
+          onShare={handleShare}
+        />
+      )}
+
+      {showWheel && (
+        <FoodWheel
+          events={events}
+          leftovers={activeLeftovers}
+          now={now}
+          onShowOnMap={handlePickFromWheel}
+          onClose={closeWheel}
+        />
+      )}
+
+      {toast && (
+        <div className="toast" role="status">
+          {toast}
+        </div>
+      )}
+
+      {shareFallback && (
+        <div className="share-box" role="dialog" aria-label="Share link">
+          <div className="share-box__top">
+            <strong>Copy this link to share</strong>
+            <button
+              type="button"
+              className="share-box__close"
+              onClick={() => setShareFallback(null)}
+              aria-label="Close"
+            >
+              ✕
+            </button>
+          </div>
+          <input
+            readOnly
+            value={shareFallback.url}
+            onFocus={(e) => e.target.select()}
+            autoFocus
+          />
+        </div>
       )}
     </div>
   )

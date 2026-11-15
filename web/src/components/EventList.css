@@ -140,8 +140,10 @@
 }
 
 /* Lines up under the item text (6px row padding + 26px emoji + 10px gap). */
-.event-item__how {
-  display: block;
+.event-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
   margin: -4px 0 6px 42px;
   font-size: 0.82rem;
 }

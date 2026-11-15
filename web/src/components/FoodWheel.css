@@ -1,0 +1,215 @@
+:root {
+  --wheel-0: #ffd166;
+  --wheel-1: #ff8fab;
+  --wheel-2: #8ce99a;
+  --wheel-3: #74c0fc;
+  --wheel-4: #ffa94d;
+  --wheel-5: #b197fc;
+  --wheel-6: #63e6be;
+  --wheel-7: #ffe066;
+  --wheel-text: #1b1b1b;
+  --wheel-rim: #ffffff;
+}
+
+:root[data-theme='dark'] {
+  --wheel-0: #5b4a12;
+  --wheel-1: #6b2440;
+  --wheel-2: #1f5e35;
+  --wheel-3: #1d4778;
+  --wheel-4: #6e3c12;
+  --wheel-5: #452a7a;
+  --wheel-6: #145a4c;
+  --wheel-7: #5e5214;
+  --wheel-text: #f1f4ff;
+  --wheel-rim: #7aa7ff;
+}
+
+.wheel-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: var(--backdrop);
+}
+
+.wheel-modal {
+  width: min(420px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  padding-bottom: 16px;
+}
+
+.wheel-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 4px 16px;
+}
+
+.wheel-modal__header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.wheel-modal__close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface-subtle);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+/* ---- Wheel ---- */
+.wheel {
+  position: relative;
+  width: min(320px, calc(100vw - 72px));
+  aspect-ratio: 1;
+  margin: 8px auto 0;
+}
+
+.wheel__disc,
+.wheel__disc svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.wheel__slice--0 { fill: var(--wheel-0); }
+.wheel__slice--1 { fill: var(--wheel-1); }
+.wheel__slice--2 { fill: var(--wheel-2); }
+.wheel__slice--3 { fill: var(--wheel-3); }
+.wheel__slice--4 { fill: var(--wheel-4); }
+.wheel__slice--5 { fill: var(--wheel-5); }
+.wheel__slice--6 { fill: var(--wheel-6); }
+.wheel__slice--7 { fill: var(--wheel-7); }
+
+.wheel__slice {
+  stroke: var(--wheel-rim);
+  stroke-width: 1.5;
+}
+
+.wheel__rim {
+  fill: none;
+  stroke: var(--wheel-rim);
+  stroke-width: 3;
+}
+
+:root[data-theme='dark'] .wheel__rim {
+  filter: drop-shadow(0 0 4px rgba(122, 167, 255, 0.8));
+}
+
+.wheel__label {
+  fill: var(--wheel-text);
+  font-size: 8.5px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* Fixed pointer at 12 o'clock */
+.wheel__pointer {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 22px solid var(--red);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35));
+}
+
+.wheel__hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border: 3px solid var(--wheel-rim);
+  border-radius: 50%;
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
+  font-family: inherit;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.wheel__hub:disabled {
+  cursor: default;
+}
+
+/* ---- Result ---- */
+.wheel-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+  margin: 14px 16px 0;
+  min-height: 56px;
+}
+
+.wheel-result__hint {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.wheel-result__emoji {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.wheel-result__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.wheel-result__body span {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.wheel-result__buttons {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+/* ---- Empty state ---- */
+.wheel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 16px 8px;
+  text-align: center;
+}
+
+.wheel-empty__icon {
+  font-size: 48px;
+}
+
+.wheel-empty p {
+  margin: 0;
+  color: var(--text-muted);
+}

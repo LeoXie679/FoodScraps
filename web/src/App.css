@@ -92,6 +92,13 @@
   font-weight: 600;
 }
 
+.btn--hungry {
+  border-color: var(--amber);
+  background: var(--amber-bg);
+  color: var(--amber-text);
+  font-weight: 700;
+}
+
 .btn:disabled {
   opacity: 0.6;
   cursor: default;
@@ -153,12 +160,13 @@
 }
 
 /* ---- Toast ---- */
+/* Fixed + above modals, so "Link copied!" shows when sharing from a modal. */
 .toast {
-  position: absolute;
-  top: 12px;
+  position: fixed;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1150;
+  z-index: 2100;
   background: var(--green-strong);
   color: #fff;
   padding: 10px 16px;
@@ -167,4 +175,48 @@
   font-size: 0.95rem;
   max-width: calc(100% - 24px);
   text-align: center;
+}
+
+/* ---- Share fallback: link to copy by hand ---- */
+.share-box {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 2100;
+  width: min(420px, calc(100% - 24px));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 6px 24px var(--shadow);
+  font-size: 0.9rem;
+}
+
+.share-box__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.share-box__close {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.share-box input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-subtle);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 16px; /* no iOS zoom */
 }

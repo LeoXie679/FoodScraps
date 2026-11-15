@@ -252,8 +252,15 @@
   font-size: 1.1rem;
 }
 
+.flyer-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .flyer-modal__source {
-  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
   color: var(--text);
 }

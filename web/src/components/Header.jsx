@@ -8,6 +8,7 @@ export default function Header({
   weather,
   theme,
   onToggleTheme,
+  onOpenWheel,
 }) {
   const isDark = theme === 'dark'
   return (
@@ -37,6 +38,9 @@ export default function Header({
           title={isDark ? 'Day mode' : 'Night mode'}
         >
           {isDark ? '☀️' : '🌙'}
+        </button>
+        <button type="button" onClick={onOpenWheel} className="btn btn--hungry">
+          I’m hungry 🎰
         </button>
         <button onClick={onTogglePost} className="btn btn--green">
           Post leftovers

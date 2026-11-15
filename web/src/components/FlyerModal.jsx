@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { USE_MOCK } from '../config.js'
 import { fetchEventDetail } from '../lib/api.js'
 import { formatTimeRange } from '../lib/time.js'
+import { useModalDismiss } from '../hooks/useModalDismiss.js'
+import EventActions from './EventActions.jsx'
 import './FlyerModal.css'
 
 const PIPELINE_STEPS = [
@@ -34,7 +36,7 @@ function FieldRow({ label, value }) {
  * "How we found this" — the original flyer next to what the AI extracted.
  * Full screen on phones, centered card on desktop.
  */
-export default function FlyerModal({ event, onClose }) {
+export default function FlyerModal({ event, onClose, onShare }) {
   const [detail, setDetail] = useState(null)
   const [status, setStatus] = useState(USE_MOCK ? 'mock' : 'loading')
   const [failedUrl, setFailedUrl] = useState(null)
@@ -59,24 +61,7 @@ export default function FlyerModal({ event, onClose }) {
     }
   }, [event.id])
 
-  // Escape closes; focus the X on open and give focus back on close.
-  // Runs once (onClose via a ref) so 15s polling re-renders don't steal focus.
-  const onCloseRef = useRef(onClose)
-  useEffect(() => {
-    onCloseRef.current = onClose
-  })
-  useEffect(() => {
-    const previous = document.activeElement
-    closeRef.current?.focus()
-    function handleKey(e) {
-      if (e.key === 'Escape') onCloseRef.current()
-    }
-    document.addEventListener('keydown', handleKey)
-    return () => {
-      document.removeEventListener('keydown', handleKey)
-      previous?.focus?.()
-    }
-  }, [])
+  useModalDismiss(onClose, closeRef)
 
   const ev = detail?.event ?? event
   const showImage = ev.image_url && failedUrl !== ev.image_url
@@ -209,16 +194,19 @@ export default function FlyerModal({ event, onClose }) {
               </ol>
             </section>
 
-            {ev.source_url && (
-              <a
-                className="btn flyer-modal__source"
-                href={ev.source_url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                View original post ↗
-              </a>
-            )}
+            <div className="flyer-modal__actions">
+              {ev.source_url && (
+                <a
+                  className="btn flyer-modal__source"
+                  href={ev.source_url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View original post ↗
+                </a>
+              )}
+              <EventActions event={ev} onShare={onShare} variant="buttons" />
+            </div>
           </div>
         </div>
       </div>
