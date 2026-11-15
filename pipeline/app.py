@@ -66,7 +66,7 @@ def match_building(conn, location, buildings=None):
         scorer=fuzz.WRatio,
     )
 
-    if match and match[1] >= 80:
+    if match and match[1] >= 85:
         return choices[match[0]]
 
     return None
