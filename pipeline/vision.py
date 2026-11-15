@@ -87,7 +87,7 @@ Rules:
                 ]
             }
         ],
-        "max_output_tokens": 1600,
+        "max_output_tokens": 4096,
         "temperature": 0.1
     }
 

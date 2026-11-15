@@ -297,7 +297,7 @@ def process_new_posts():
                 """
                 SELECT id, caption, image_key
                 FROM raw_posts
-                WHERE status = 'new'
+                WHERE status IN ('new', 'no_date')
                 ORDER BY created_at ASC
                 LIMIT 50
                 """
