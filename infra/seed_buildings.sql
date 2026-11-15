@@ -30,7 +30,8 @@ INSERT INTO buildings (name, aliases, lat, lng) VALUES
 ('The Loft', ARRAY['Loft','Zanzibar'], 32.8799, -117.2371),
 
 -- Student Center
-('Student Center', ARRAY['Old Student Center','SC'], 32.8779, -117.2394),
+('Student Center', ARRAY['Old Student Center','SC','Food Co-op','Food Coop','UCSD Food Co-op'], 32.8779, -117.2394),
+('International Center', ARRAY['IC','IPO BBQ','IPO','International Center BBQ','International Center West'], 32.877262, -117.238771),
 ('Student Center Stage Room', ARRAY['Stage Room','The Stage Room'], 32.87785, -117.2395),
 ('The Grove Meeting Room', ARRAY['Grove','Grove Meeting Room'], 32.87795, -117.2393),
 ('Dolores Huerta Room', ARRAY['Dolores Huerta-Philip Vera Cruz Room','Huerta Room'], 32.8778, -117.2396),

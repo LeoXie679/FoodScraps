@@ -377,6 +377,18 @@
       "lng": -117.2418
     },
     {
+      "name": "International Center",
+      "aliases": [
+        "IC",
+        "IPO BBQ",
+        "IPO",
+        "International Center BBQ",
+        "International Center West"
+      ],
+      "lat": 32.877262,
+      "lng": -117.238771
+    },
+    {
       "name": "Jacobs Hall",
       "aliases": [
         "EBU1",
@@ -885,7 +897,10 @@
       "name": "Student Center",
       "aliases": [
         "Old Student Center",
-        "SC"
+        "SC",
+        "Food Co-op",
+        "Food Coop",
+        "UCSD Food Co-op"
       ],
       "lat": 32.8779,
       "lng": -117.2394
