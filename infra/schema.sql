@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS raw_posts (
     caption       TEXT,
     image_key     TEXT,
     status        TEXT NOT NULL DEFAULT 'new'
-                  CHECK (status IN ('new', 'processed', 'failed', 'not_food')),
+                  CHECK (status IN ('new', 'processed', 'failed', 'not_food', 'no_date')),
     created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE (source, source_url)
 );
