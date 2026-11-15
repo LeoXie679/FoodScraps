@@ -102,6 +102,7 @@ INSERT INTO buildings (name, aliases, lat, lng) VALUES
 ('The Hump', ARRAY['Hump'], 32.8788, -117.2380),
 ('Sixth College', ARRAY['Sixth','NTPLLN','North Torrey Pines Living and Learning'], 32.8826, -117.2421),
 ('Muir College', ARRAY['Muir','Muir Quad'], 32.8784, -117.2412),
+('Half Dome Lounge', ARRAY['Half Dome','half dome lounge','Halfdome Lounge','Half-Dome Lounge'], 32.8789, -117.2420),
 ('Revelle Plaza', ARRAY['Revelle','Revelle Fountain','Revelle College'], 32.8745, -117.2410),
 ('Warren College', ARRAY['Warren','Earl Warren College'], 32.8815, -117.2330),
 ('Marshall College', ARRAY['Marshall','Thurgood Marshall','Marshall Lower Apartments Lawn'], 32.8780, -117.2418),

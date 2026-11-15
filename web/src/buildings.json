@@ -339,6 +339,17 @@
       "lng": -117.2362
     },
     {
+      "name": "Half Dome Lounge",
+      "aliases": [
+        "Half Dome",
+        "half dome lounge",
+        "Halfdome Lounge",
+        "Half-Dome Lounge"
+      ],
+      "lat": 32.8789,
+      "lng": -117.242
+    },
+    {
       "name": "Halicioglu Data Science Institute",
       "aliases": [
         "HDSI",
