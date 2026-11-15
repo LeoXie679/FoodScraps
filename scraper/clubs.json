@@ -1,5 +1,5 @@
 {
-  "note": "Public UCSD-related Instagram accounts. Edit freely. Prefer accounts that post event flyers.",
+  "note": "Public UCSD-related Instagram accounts. Edit freely. Prefer accounts that post event flyers or free/food-related events.",
   "accounts": [
     {"handle": "asucsd", "url": "https://www.instagram.com/asucsd/", "org": "ASUCSD"},
     {"handle": "tritonlink", "url": "https://www.instagram.com/tritonlink/", "org": "TritonLink"},
@@ -21,8 +21,23 @@
     {"handle": "ucsdrobotics", "url": "https://www.instagram.com/ucsdrobotics/", "org": "Robotics"},
     {"handle": "tritonsofcolor", "url": "https://www.instagram.com/tritonsofcolor/", "org": "Tritons of Color"},
     {"handle": "ucsdchecafe", "url": "https://www.instagram.com/ucsdchecafe/", "org": "Che Cafe"},
+    {"handle": "thechecafe", "url": "https://www.instagram.com/thechecafe/", "org": "Che Cafe Collective"},
     {"handle": "ucsdfoodcoop", "url": "https://www.instagram.com/ucsdfoodcoop/", "org": "Food Co-op"},
     {"handle": "basicneedsucsd", "url": "https://www.instagram.com/basicneedsucsd/", "org": "Basic Needs"},
+    {"handle": "tritonfoodpantry", "url": "https://www.instagram.com/tritonfoodpantry/", "org": "Triton Food Pantry"},
+    {"handle": "frnucsd", "url": "https://www.instagram.com/frnucsd/", "org": "Food Recovery Network"},
+    {"handle": "checommunityfridge", "url": "https://www.instagram.com/checommunityfridge/", "org": "Che Community Fridge"},
+    {"handle": "dollar_lunch_club", "url": "https://www.instagram.com/dollar_lunch_club/", "org": "Dollar Lunch Club"},
+    {"handle": "gourmetmuir", "url": "https://www.instagram.com/gourmetmuir/", "org": "Gourmet Muir"},
+    {"handle": "triton.foodie", "url": "https://www.instagram.com/triton.foodie/", "org": "Triton Foodie"},
+    {"handle": "cheeseatucsd", "url": "https://www.instagram.com/cheeseatucsd/", "org": "Cheese Club"},
+    {"handle": "ucsdcostcoclub", "url": "https://www.instagram.com/ucsdcostcoclub/", "org": "Costco Club"},
+    {"handle": "gstorecoop", "url": "https://www.instagram.com/gstorecoop/", "org": "General Store Co-op"},
+    {"handle": "jewishtritons", "url": "https://www.instagram.com/jewishtritons/", "org": "Chabad at UCSD"},
+    {"handle": "ucsdhousingdining", "url": "https://www.instagram.com/ucsdhousingdining/", "org": "UCSD Housing Dining"},
+    {"handle": "sscucsd", "url": "https://www.instagram.com/sscucsd/", "org": "Student Sustainability Collective"},
+    {"handle": "acssa.atucsd", "url": "https://www.instagram.com/acssa.atucsd/", "org": "ACS Student Affiliates"},
+    {"handle": "dragonsfirst", "url": "https://www.instagram.com/dragonsfirst/", "org": "Dragon's First"},
     {"handle": "thehubucsd", "url": "https://www.instagram.com/thehubucsd/", "org": "The Hub"},
     {"handle": "ucsdrecreation", "url": "https://www.instagram.com/ucsdrecreation/", "org": "Recreation"},
     {"handle": "ucsdcareercenter", "url": "https://www.instagram.com/ucsdcareercenter/", "org": "Career Center"},
@@ -32,6 +47,9 @@
     {"handle": "revellecollege", "url": "https://www.instagram.com/revellecollege/", "org": "Revelle College"},
     {"handle": "sixthcollege", "url": "https://www.instagram.com/sixthcollege/", "org": "Sixth College"},
     {"handle": "erc.ucsd", "url": "https://www.instagram.com/erc.ucsd/", "org": "ERC"},
-    {"handle": "marshall.ucsd", "url": "https://www.instagram.com/marshall.ucsd/", "org": "Marshall College"}
+    {"handle": "ucsdscerc", "url": "https://www.instagram.com/ucsdscerc/", "org": "ERC Student Council"},
+    {"handle": "marshall.ucsd", "url": "https://www.instagram.com/marshall.ucsd/", "org": "Marshall College"},
+    {"handle": "seventhcollegeucsd", "url": "https://www.instagram.com/seventhcollegeucsd/", "org": "Seventh College"},
+    {"handle": "eighthcollege", "url": "https://www.instagram.com/eighthcollege/", "org": "Eighth College"}
   ]
 }
