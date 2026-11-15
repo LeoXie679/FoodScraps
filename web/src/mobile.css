@@ -1,0 +1,170 @@
+/* ==== Phone / touch polish ====
+   Desktop with a mouse is unaffected: everything here is inside the media
+   query below (narrow screens or coarse pointers). */
+
+/* No rubber-band bounce or pull-to-refresh on the app shell. */
+html,
+body {
+  overscroll-behavior: none;
+}
+
+@media (max-width: 768px), (pointer: coarse) {
+  /* ---- 44×44 minimum hit areas ----
+     Small controls get an invisible ::before that grows their hit area to
+     at least 44×44, centered on the control, without changing the layout. */
+  .header .chip,
+  .header__actions .btn,
+  .food-weather__badge,
+  .event-list__tab {
+    position: relative;
+  }
+
+  .header .chip::before,
+  .header__actions .btn::before,
+  .food-weather__badge::before,
+  .event-list__tab::before {
+    content: '';
+    position: absolute;
+    top: min(0px, calc((100% - 44px) / 2));
+    bottom: min(0px, calc((100% - 44px) / 2));
+    left: min(0px, calc((100% - 44px) / 2));
+    right: min(0px, calc((100% - 44px) / 2));
+  }
+
+  /* The chip row scrolls sideways (overflow clips), so give it room for the
+     grown hit areas without changing the header's height. */
+  .header__filters {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-top: -8px;
+    margin-bottom: -8px;
+    padding-left: 6px;
+    margin-left: -6px;
+  }
+
+  /* Tabs: 36px pills + 4px of hit area above/below inside the row's padding. */
+  .event-list__tab {
+    min-height: 36px;
+  }
+  .event-list__tabs {
+    padding-bottom: 8px;
+  }
+
+  /* Regular buttons (panels, modals, wheel): real 44px height. */
+  .btn {
+    min-height: 44px;
+  }
+  /* ...except the compact header ones, which use the ::before above. */
+  .header .chip {
+    min-height: 28px;
+  }
+
+  /* List row actions: 44px tall, overlapping the row's bottom padding so the
+     list doesn't get much taller. */
+  .mini-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .event-item__actions {
+    margin-top: -14px;
+    margin-bottom: 0;
+  }
+
+  /* Popups must fit in the strip of map above the bottom sheet: no flyer
+     thumbnail on phones (it's in "How we found this"), and scroll if still
+     too tall. */
+  .popup__flyer {
+    display: none;
+  }
+  .leaflet-popup-content {
+    /* --popup-max-h is set by App from the space above the bottom sheet. */
+    max-height: var(--popup-max-h, 42vh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Popup links */
+  .popup__links .link-button,
+  .popup__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* Leaflet's zoom and popup-close buttons */
+  .leaflet-touch .leaflet-bar a {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+  }
+  .leaflet-container a.leaflet-popup-close-button {
+    width: 44px;
+    height: 44px;
+    font-size: 26px;
+    line-height: 44px;
+  }
+
+  /* Modal close buttons and small text buttons */
+  .flyer-modal__close,
+  .wheel-modal__close,
+  .admin-modal__close,
+  .share-box__close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .admin-limit label {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Inputs at 16px+ so iOS Safari doesn't zoom on focus. */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* ---- Safe areas (notch, home indicator); needs viewport-fit=cover ---- */
+.header {
+  padding-top: max(8px, env(safe-area-inset-top, 0px));
+  padding-left: max(12px, env(safe-area-inset-left, 0px));
+  padding-right: max(12px, env(safe-area-inset-right, 0px));
+}
+
+@media (max-width: 599px) {
+  /* Space targets so neighbouring 44px hit areas don't overlap: 32px icon
+     buttons 12px apart, and 14px between the icon row and the chip row. */
+  .header {
+    row-gap: 14px;
+  }
+  .header__actions {
+    gap: 12px;
+  }
+  .header {
+    padding-top: max(6px, env(safe-area-inset-top, 0px));
+    padding-left: max(10px, env(safe-area-inset-left, 0px));
+    padding-right: max(10px, env(safe-area-inset-right, 0px));
+  }
+}
+
+.toast,
+.share-box {
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+}
+
+.wheel-backdrop,
+.admin-backdrop {
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 768px) {
+  .flyer-modal__body {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .post-panel {
+    max-height: calc(100% - 24px - env(safe-area-inset-bottom, 0px));
+  }
+}

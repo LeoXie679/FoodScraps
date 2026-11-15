@@ -4,10 +4,11 @@ import { FeedItem, LiveDot } from './ActivityFeed.jsx'
 import EventActions from './EventActions.jsx'
 import { foodEmoji } from '../lib/food.js'
 import { eventStatus, formatCountdown } from '../lib/time.js'
+import { useMediaQuery } from '../hooks/useMediaQuery.js'
+import { FLICK_VELOCITY, useSheetGestures } from '../hooks/useSheetGestures.js'
 import './EventList.css'
 
-const DRAG_THRESHOLD = 40 // px of drag needed to expand/collapse
-const TAP_SLOP = 4 // px of movement still treated as a tap
+const TAP_SLOP = 4 // px of mouse movement still treated as a click
 
 // Leftovers first (soonest to expire), then upcoming/current events by start
 // time, then ended events at the bottom.
@@ -76,6 +77,32 @@ export default function EventList({
   const [peek, setPeek] = useState(160)
   const drag = useRef(null)
   const listRef = useRef(null)
+  const sheetRef = useRef(null)
+  const suppressClickUntil = useRef(0)
+  const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+
+  // Snap to collapsed/expanded when a drag ends: a fast flick goes in its
+  // direction; otherwise it snaps over once dragged past 25% of the way.
+  function snapAfterDrag(dy, velocity) {
+    const travel = Math.max(1, (sheetRef.current?.offsetHeight ?? 0) - peek)
+    let next = expanded
+    if (Math.abs(velocity) > FLICK_VELOCITY) next = velocity < 0
+    else if (expanded && dy > travel * 0.25) next = false
+    else if (!expanded && -dy > travel * 0.25) next = true
+    setDragY(null)
+    setExpanded(next)
+    // A drag that ends over the header shouldn't also count as a tap on it.
+    suppressClickUntil.current = Date.now() + 400
+  }
+
+  useSheetGestures({
+    enabled: isSheet,
+    sheetRef,
+    listRef,
+    isExpanded: expanded,
+    onDrag: setDragY,
+    onRelease: snapAfterDrag,
+  })
 
   // Collapsed height = everything above the list + its first two rows.
   useLayoutEffect(() => {
@@ -99,7 +126,9 @@ export default function EventList({
     if (!expanded && listRef.current) listRef.current.scrollTop = 0
   }, [expanded])
 
+  // Mouse: drag the handle area (touch is handled by useSheetGestures).
   function handlePointerDown(e) {
+    if (e.pointerType !== 'mouse') return
     drag.current = { startY: e.clientY, dy: 0 }
     e.currentTarget.setPointerCapture(e.pointerId)
   }
@@ -114,16 +143,20 @@ export default function EventList({
   function handlePointerUp() {
     const d = drag.current
     drag.current = null
-    setDragY(null)
     if (!d) return
-    if (Math.abs(d.dy) <= TAP_SLOP) setExpanded((x) => !x)
-    else if (d.dy < -DRAG_THRESHOLD) setExpanded(true)
-    else if (d.dy > DRAG_THRESHOLD) setExpanded(false)
+    if (Math.abs(d.dy) > TAP_SLOP) snapAfterDrag(d.dy, 0)
+    else setDragY(null) // a click: handled by onClick below
   }
 
   function handlePointerCancel() {
     drag.current = null
     setDragY(null)
+  }
+
+  // Tapping/clicking the handle area toggles the sheet.
+  function handleHeaderClick() {
+    if (Date.now() < suppressClickUntil.current) return
+    setExpanded((x) => !x)
   }
 
   function handleKeyDown(e) {
@@ -145,18 +178,26 @@ export default function EventList({
 
   let sheetStyle
   if (isSheet) {
-    const base = expanded ? '0px' : `calc(100% - ${peek}px)`
+    // Snap points: expanded = top of the sheet (≈85% of the screen tall);
+    // collapsed = only the peek (handle + summary + tabs + 2 rows) showing,
+    // kept above the iPhone home indicator.
+    const collapsedY = `calc(100% - ${peek}px - env(safe-area-inset-bottom, 0px))`
+    const base = expanded ? '0px' : collapsedY
     sheetStyle = {
       transform:
         dragY == null
           ? `translateY(${base})`
-          : `translateY(max(0px, calc(${base} + ${dragY}px)))`,
-      transition: dragY == null ? 'transform 0.25s ease' : 'none',
+          : `translateY(clamp(0px, calc(${base} + ${dragY}px), ${collapsedY}))`,
+      transition:
+        dragY != null || reduceMotion
+          ? 'none'
+          : 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
     }
   }
 
   return (
     <section
+      ref={sheetRef}
       className={`event-list event-list--${mode}${expanded ? ' is-expanded' : ''}`}
       style={sheetStyle}
       aria-label="Free food list"
@@ -171,6 +212,7 @@ export default function EventList({
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerCancel}
+          onClick={handleHeaderClick}
           onKeyDown={handleKeyDown}
         >
           <div className="event-list__handle" />

@@ -40,6 +40,9 @@ const OSM_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 const OSM_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 
+// Phones: when flying to a pin, keep it this far (px) above the sheet's top.
+const PIN_GAP = 32
+
 function hasCoords(x) {
   return x.lat != null && x.lng != null
 }
@@ -109,9 +112,35 @@ export default function App() {
     else delete markers.current[key]
   }
 
-  const handlePeekHeight = useCallback((h) => {
-    sheetPeek.current = h
-  }, [])
+  // Phones: a popup opened from the list must fit in the strip of map above
+  // the collapsed sheet. Expose that height to CSS (--popup-max-h caps the
+  // popup and lets it scroll).
+  const mapAreaRef = useRef(null)
+  const updatePopupMax = useCallback(() => {
+    const el = mapAreaRef.current
+    if (!el) return
+    if (isDesktop || !sheetPeek.current) {
+      el.style.removeProperty('--popup-max-h')
+      return
+    }
+    // map height − sheet peek − pin gap (PIN_GAP) − popup tip − padding − margin
+    const avail = el.clientHeight - sheetPeek.current - PIN_GAP - 20 - 26 - 8
+    el.style.setProperty('--popup-max-h', `${Math.max(120, Math.round(avail))}px`)
+  }, [isDesktop])
+
+  const handlePeekHeight = useCallback(
+    (h) => {
+      sheetPeek.current = h
+      updatePopupMax()
+    },
+    [updatePopupMax],
+  )
+
+  useEffect(() => {
+    updatePopupMax()
+    window.addEventListener('resize', updatePopupMax)
+    return () => window.removeEventListener('resize', updatePopupMax)
+  }, [updatePopupMax])
 
   // Fly to a marker and open its popup once the map stops moving. Event pins
   // may still be inside a cluster then: zoomToShowLayer zooms in or
@@ -122,9 +151,12 @@ export default function App() {
       if (!marker || !map) return
       const zoom = Math.max(map.getZoom(), 17)
       let target = marker.getLatLng()
-      // On mobile, aim above the collapsed sheet so the pin isn't hidden.
+      // On mobile, put the pin near the bottom of the strip of map above the
+      // collapsed sheet, so its popup (which opens upward) has room to show.
       if (!isDesktop && sheetPeek.current) {
-        const point = map.project(target, zoom).add([0, sheetPeek.current / 2])
+        const h = map.getSize().y
+        const pinY = Math.max(h * 0.35, h - sheetPeek.current - PIN_GAP)
+        const point = map.project(target, zoom).subtract([0, pinY - h / 2])
         target = map.unproject(point, zoom)
       }
       if (pendingOpen.current) map.off('moveend', pendingOpen.current)
@@ -247,7 +279,7 @@ export default function App() {
       <div className="app__body">
         {isDesktop && list}
 
-        <div className="app__map">
+        <div className="app__map" ref={mapAreaRef}>
           <MapContainer
             center={UCSD_CENTER}
             zoom={16}
