@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { POLL_MS, USE_MOCK } from '../config.js'
 import { fetchLiveData, getInitialData } from '../lib/api.js'
 
@@ -14,6 +14,7 @@ export function useLiveData({ onError } = {}) {
   const [leftovers, setLeftovers] = useState(initialData.leftovers)
   const [detectedAt, setDetectedAt] = useState({})
 
+  const loadRef = useRef(null)
   const onErrorRef = useRef(onError)
   useEffect(() => {
     onErrorRef.current = onError
@@ -55,13 +56,19 @@ export function useLiveData({ onError } = {}) {
       }
     }
 
+    loadRef.current = load
     load()
     const id = setInterval(load, POLL_MS)
     return () => {
       cancelled = true
+      loadRef.current = null
       clearInterval(id)
     }
   }, [])
 
-  return { events, leftovers, setLeftovers, detectedAt }
+  // Poll right now (e.g. after the admin panel runs the pipeline). New
+  // events get stamped as "just detected" like any other poll.
+  const refresh = useCallback(() => loadRef.current?.(), [])
+
+  return { events, leftovers, setLeftovers, detectedAt, refresh }
 }

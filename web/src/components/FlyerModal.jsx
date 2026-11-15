@@ -3,15 +3,10 @@ import { USE_MOCK } from '../config.js'
 import { fetchEventDetail } from '../lib/api.js'
 import { formatTimeRange } from '../lib/time.js'
 import { useModalDismiss } from '../hooks/useModalDismiss.js'
+import { PIPELINE_STEPS } from '../lib/pipeline.js'
 import EventActions from './EventActions.jsx'
 import './FlyerModal.css'
 
-const PIPELINE_STEPS = [
-  { icon: '📸', title: 'Scraped from Instagram', via: 'Bright Data' },
-  { icon: '🗄️', title: 'Stored', via: 'Vultr Object Storage' },
-  { icon: '🤖', title: 'Read by AI', via: 'Vultr Serverless Inference' },
-  { icon: '📍', title: 'Matched to building', via: 'Neon Postgres' },
-]
 
 function confidenceLevel(c) {
   if (c >= 0.8) return { key: 'high', label: 'High' }
@@ -181,12 +176,12 @@ export default function FlyerModal({ event, onClose, onShare }) {
               <h3>How it got here</h3>
               <ol className="flyer-pipeline">
                 {PIPELINE_STEPS.map((s) => (
-                  <li key={s.title}>
+                  <li key={s.done}>
                     <span className="flyer-pipeline__icon" aria-hidden="true">
                       {s.icon}
                     </span>
                     <span>
-                      <strong>{s.title}</strong>
+                      <strong>{s.done}</strong>
                       <span className="flyer-muted"> · {s.via}</span>
                     </span>
                   </li>

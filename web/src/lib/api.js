@@ -105,6 +105,101 @@ export async function fetchEventDetail(id) {
   return { event: normalizeEvent(raw), caption: toText(raw.caption) }
 }
 
+// ---- Admin: trigger a scrape + AI run (demo panel, ?admin=1) ----
+
+// Server allows 900s for the scrape + 120s for the AI step; wait a bit longer.
+export const ADMIN_RUN_TIMEOUT_MS = 18 * 60 * 1000
+
+export class AdminRunError extends Error {
+  constructor(kind, message) {
+    super(message)
+    this.kind = kind // 'auth' | 'timeout' | 'network' | 'server'
+  }
+}
+
+function parsePipeline(p) {
+  if (!p) return { counts: null, problem: 'The AI step did not run.' }
+  if (p.error) return { counts: null, problem: `AI step failed: ${p.error}` }
+  let body = null
+  try {
+    body = JSON.parse(p.body)
+  } catch {
+    // body is plain text (e.g. an error page)
+  }
+  if (p.status_code >= 400 || !body || typeof body.total !== 'number') {
+    const detail = body?.detail ?? p.body
+    return {
+      counts: null,
+      problem: `AI step returned ${p.status_code}${detail ? `: ${String(detail).slice(0, 200)}` : ''}`,
+    }
+  }
+  const n = (k) => (Number.isFinite(body[k]) ? body[k] : 0)
+  return {
+    counts: {
+      total: n('total'),
+      processed: n('processed'),
+      not_food: n('not_food'),
+      duplicate: n('duplicate'),
+      failed: n('failed'),
+    },
+    problem: null,
+  }
+}
+
+/**
+ * POST /admin/scrape-now?limit=N with X-Admin-Token. Resolves to
+ * { ok, returncode, stdout, stderr, counts, problem }; throws AdminRunError.
+ */
+export async function runScrapeNow({ token, limit }) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), ADMIN_RUN_TIMEOUT_MS)
+  let res
+  try {
+    res = await fetch(
+      `${API_BASE}/admin/scrape-now?limit=${encodeURIComponent(limit)}`,
+      {
+        method: 'POST',
+        headers: { 'X-Admin-Token': token },
+        signal: controller.signal,
+      },
+    )
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw new AdminRunError(
+        'timeout',
+        `No answer after ${ADMIN_RUN_TIMEOUT_MS / 60000} minutes. The run may still finish on the server; new events will show up on the next poll.`,
+      )
+    }
+    throw new AdminRunError('network', `Couldn't reach the API (${err.message}).`)
+  } finally {
+    clearTimeout(timer)
+  }
+
+  if (res.status === 401) {
+    throw new AdminRunError('auth', 'Wrong admin token. Enter it again.')
+  }
+  if (res.status === 504) {
+    throw new AdminRunError('timeout', 'The scrape timed out on the server (15 min limit).')
+  }
+  let data = null
+  try {
+    data = await res.json()
+  } catch {
+    // non-JSON error page
+  }
+  if (!res.ok) {
+    const detail = data?.detail ? `: ${JSON.stringify(data.detail).slice(0, 200)}` : ''
+    throw new AdminRunError('server', `Server returned ${res.status}${detail}`)
+  }
+  return {
+    ok: Boolean(data?.ok),
+    returncode: data?.returncode ?? null,
+    stdout: data?.stdout_tail || '',
+    stderr: data?.stderr_tail || '',
+    ...parsePipeline(data?.pipeline),
+  }
+}
+
 // ---- Posting ----
 
 export async function createLeftover({ building, description, postedBy }) {

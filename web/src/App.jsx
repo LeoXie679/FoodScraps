@@ -10,6 +10,8 @@ import ActivityTicker from './components/ActivityFeed.jsx'
 import PostLeftoversPanel from './components/PostLeftoversPanel.jsx'
 import FlyerModal from './components/FlyerModal.jsx'
 import FoodWheel from './components/FoodWheel.jsx'
+import AdminPanel from './components/AdminPanel.jsx'
+import { ADMIN_MODE } from './config.js'
 import { shareEvent } from './lib/share.js'
 import { EventMarker, LeftoverMarker } from './components/FoodMarker.jsx'
 import { eventMatches, isDietFilter, leftoverMatches } from './lib/filters.js'
@@ -57,8 +59,10 @@ export default function App() {
   const [theme, toggleTheme] = useTheme()
   const closeFlyer = useCallback(() => setFlyerEvent(null), [])
   const closeWheel = useCallback(() => setShowWheel(false), [])
+  const [showAdmin, setShowAdmin] = useState(false)
+  const closeAdmin = useCallback(() => setShowAdmin(false), [])
 
-  const { events, leftovers, setLeftovers, detectedAt } = useLiveData({
+  const { events, leftovers, setLeftovers, detectedAt, refresh } = useLiveData({
     onError: setToast,
   })
 
@@ -223,6 +227,7 @@ export default function App() {
         theme={theme}
         onToggleTheme={toggleTheme}
         onOpenWheel={() => setShowWheel(true)}
+        onOpenAdmin={ADMIN_MODE ? () => setShowAdmin(true) : undefined}
       />
       <ActivityTicker items={feed} onSelect={handleSelectFeed} />
 
@@ -282,6 +287,11 @@ export default function App() {
           onClose={closeFlyer}
           onShare={handleShare}
         />
+      )}
+
+      {showAdmin && (
+        // After a run, poll right away so new events show as "just detected".
+        <AdminPanel onClose={closeAdmin} onFinished={refresh} />
       )}
 
       {showWheel && (

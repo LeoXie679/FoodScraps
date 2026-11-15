@@ -9,6 +9,7 @@ export default function Header({
   theme,
   onToggleTheme,
   onOpenWheel,
+  onOpenAdmin,
 }) {
   const isDark = theme === 'dark'
   return (
@@ -30,6 +31,18 @@ export default function Header({
         ))}
       </nav>
       <div className="header__actions">
+        {/* Only rendered with ?admin=1 */}
+        {onOpenAdmin && (
+          <button
+            type="button"
+            onClick={onOpenAdmin}
+            className="btn"
+            aria-label="Pipeline admin panel"
+            title="Pipeline admin panel"
+          >
+            ⚙️<span className="btn__label"> Pipeline</span>
+          </button>
+        )}
         <button
           type="button"
           onClick={onToggleTheme}
