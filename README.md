@@ -30,7 +30,7 @@ python run_scrape.py --limit 1 --dry-run
 - `GET /events/{id}`
 - `POST /leftovers` `{location_name, description, posted_by?}`
 - `GET /leftovers/active`
-- `POST /admin/scrape-now` (header `X-Admin-Token`) — also run automatically every 30 minutes by the `scrape-cron` compose service (scrape → pipeline)
+- `POST /admin/scrape-now` (header `X-Admin-Token`; optional `?limit=&offset=`) — also run automatically every 30 minutes by `scrape-cron` (rotating ~12-club slices → pipeline; full list times out at 15m)
 
 ## Deploy (on Vultr Compute)
 

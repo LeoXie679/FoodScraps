@@ -278,13 +278,16 @@ def scrape_now(
     authorization: Optional[str] = Header(None),
     x_admin_token: Optional[str] = Header(None),
     limit: Optional[int] = Query(None, ge=1, le=50),
+    offset: int = Query(0, ge=0),
 ):
-    """Trigger one scrape run (for the live demo)."""
+    """Trigger one scrape run (for the live demo / scrape-cron)."""
     _check_admin(authorization, x_admin_token)
     scraper = REPO / "scraper" / "run_scrape.py"
     cmd = [sys.executable, str(scraper)]
     if limit:
         cmd.extend(["--limit", str(limit)])
+    if offset:
+        cmd.extend(["--offset", str(offset)])
     try:
         proc = subprocess.run(
             cmd,

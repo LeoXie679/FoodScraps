@@ -77,6 +77,8 @@ services:
     environment:
       SCRAPE_CRON_URL: http://api:8000/admin/scrape-now
       SCRAPE_CRON_INTERVAL_SEC: ${SCRAPE_CRON_INTERVAL_SEC:-1800}
+      # Full ~50-club scrape times out at 15m; cron scrapes a rotating slice.
+      SCRAPE_CRON_LIMIT: ${SCRAPE_CRON_LIMIT:-12}
     volumes:
       - ./scrape_cron.sh:/scrape_cron.sh:ro
     depends_on:

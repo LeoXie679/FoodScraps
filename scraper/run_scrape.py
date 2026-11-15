@@ -41,12 +41,17 @@ def load_env() -> None:
     load_dotenv(ROOT / ".env")
 
 
-def load_clubs(limit: int | None) -> list[dict]:
+def load_clubs(limit: int | None, offset: int = 0) -> list[dict]:
     data = json.loads(CLUBS_PATH.read_text())
     accounts = data["accounts"]
+    n = len(accounts)
+    if n == 0:
+        return []
+    start = offset % n
+    rotated = accounts[start:] + accounts[:start]
     if limit is not None:
-        accounts = accounts[:limit]
-    return accounts
+        rotated = rotated[:limit]
+    return rotated
 
 
 def process_posts(
@@ -112,7 +117,13 @@ def process_posts(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Bright Data → S3 → raw_posts")
-    parser.add_argument("--limit", type=int, default=None, help="Only first N clubs")
+    parser.add_argument("--limit", type=int, default=None, help="Only N clubs this run")
+    parser.add_argument(
+        "--offset",
+        type=int,
+        default=0,
+        help="Rotate starting club index (for cron slices)",
+    )
     parser.add_argument("--dry-run", action="store_true", help="No S3/DB writes")
     parser.add_argument("--from-json", type=Path, help="Load posts from a saved JSON file")
     parser.add_argument("--days", type=int, default=7, help="Lookback window in days")
@@ -175,8 +186,13 @@ def main() -> int:
             total_in += ins
             total_skip += sk
         else:
-            clubs = load_clubs(args.limit)
-            log.info("scraping %d club accounts (last %d days)", len(clubs), args.days)
+            clubs = load_clubs(args.limit, offset=args.offset)
+            log.info(
+                "scraping %d club accounts (offset=%d, last %d days)",
+                len(clubs),
+                args.offset,
+                args.days,
+            )
             for club in clubs:
                 url = club["url"]
                 org = club.get("org") or club.get("handle")
