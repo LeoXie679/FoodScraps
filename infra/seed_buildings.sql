@@ -1,4 +1,4 @@
--- UCSD halls, lecture buildings, and club meeting rooms.
+-- UCSD halls, lecture buildings, club meeting rooms, and HDH dining / markets.
 -- Safe to re-run (upserts on name). Coords are approximate campus-map eyeballs.
 
 INSERT INTO buildings (name, aliases, lat, lng) VALUES
@@ -109,7 +109,29 @@ INSERT INTO buildings (name, aliases, lat, lng) VALUES
 ('Seventh College', ARRAY['Seventh','7th College'], 32.8838, -117.2425),
 ('Eighth College', ARRAY['Eighth','8th College'], 32.8862, -117.2425),
 ('Faculty Club', ARRAY['Ida and Cecil Green Faculty Club','Green Faculty Club'], 32.8788, -117.2378),
-('Cross-Cultural Center', ARRAY['CCC'], 32.8797, -117.2366)
+('Cross-Cultural Center', ARRAY['CCC'], 32.8797, -117.2366),
+
+-- HDH dining halls / restaurants (flyer locations often name these)
+('64 Degrees', ARRAY['64°','64 Degrees Dining','Sixty Four Degrees','64 Degrees Revelle','Revelle Dining','Revelle Dining Hall','Umi','Umi Sushi'], 32.8747, -117.2406),
+('Pines', ARRAY['Pines Dining','Pines Dining Hall','Muir Dining','Muir Dining Hall','Slice at Pines','Pines Restaurant'], 32.8787, -117.2407),
+('Roots', ARRAY['Roots at Muir','Muir Roots'], 32.8785, -117.2410),
+('Canyon Vista Marketplace', ARRAY['Canyon Vista','Canyon Vista Dining','Canyon Vista Dining Hall','CV Marketplace','Warren Dining','Warren Dining Hall'], 32.8818, -117.2348),
+('OceanView', ARRAY['Ocean View','OceanView Terrace','Ocean View Terrace','OVT','OceanView Dining','Ocean View Dining','Marshall Dining','Marshall Dining Hall'], 32.8805, -117.2408),
+('Ventanas', ARRAY['Cafe Ventanas','Café Ventanas','Ventanas Dining','Ventanas Dining Hall','ERC Dining','ERC Dining Hall','Roosevelt Dining'], 32.8850, -117.2422),
+('Foodworx', ARRAY['Food Works','Foodworx Dining','Foodworx Pepper Canyon','Matthews Foodworx'], 32.8779, -117.2355),
+('Restaurants at Sixth College', ARRAY['Sixth College Dining','Sixth Dining','Sixth Dining Hall','Restaurants at Sixth','Restaurants at Sixth College','Wolftown','Wolf Town','Wolftown Latin','Wolftown Street','Makai','Crave at Sixth','Rooftop at Sixth','Noodles at Sixth'], 32.8825, -117.2416),
+('The Bistro', ARRAY['Bistro','Seventh Dining','Seventh College Dining','Seventh Dining Hall','The Bistro Seventh'], 32.8836, -117.2422),
+('Club Med', ARRAY['Club Med Dining','School of Medicine Dining','SOM Dining'], 32.8756, -117.2338),
+('Cecil''s at Faculty Club', ARRAY['Cecil''s','Cecils','Cecil''s Cafe','Cecils Cafe','Cecil''s Faculty Club'], 32.8788, -117.2378),
+
+-- HDH markets / cafes
+('Sixth Market', ARRAY['6th Market','Market at Sixth','Sixth College Market'], 32.8824, -117.2414),
+('Seventh Market', ARRAY['The Market @ Seventh College','Market at Seventh','7th Market','Seventh Market Coffeehouse'], 32.8837, -117.2420),
+('Goody''s Marketplace', ARRAY['Goody''s','Goodys','Goody''s Place','Goodys Marketplace','Goody''s Market'], 32.8812, -117.2412),
+('Rogers Market', ARRAY['Roger''s Market','Roger''s','Rogers Community Market'], 32.8744, -117.2409),
+('John''s Market', ARRAY['Johns Market','John''s Market Muir'], 32.8783, -117.2409),
+('Sunshine Market', ARRAY['Sunshine Market Price Center','Sunshine Market PC'], 32.8796, -117.2363),
+('Audrey''s Cafe', ARRAY['Audrey''s','Audreys Cafe','Audrey''s Café','Audreys'], 32.8793, -117.2359)
 ON CONFLICT (name) DO UPDATE SET
   aliases = EXCLUDED.aliases,
   lat = EXCLUDED.lat,

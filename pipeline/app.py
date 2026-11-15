@@ -39,19 +39,22 @@ def get_s3_client():
     )
 
 
-def match_building(conn, location):
+def _load_buildings(conn):
+    with conn.cursor() as cur:
+        cur.execute("SELECT name, aliases, lat, lng FROM buildings")
+        return cur.fetchall()
+
+
+def match_building(conn, location, buildings=None):
     if not location:
         return None
 
-    with conn.cursor() as cur:
-        cur.execute("SELECT name, aliases, lat, lng FROM buildings")
-        buildings = cur.fetchall()
-
+    buildings = buildings if buildings is not None else _load_buildings(conn)
     choices = {}
 
     for building in buildings:
         choices[building["name"]] = building
-        for alias in building["aliases"]:
+        for alias in building["aliases"] or []:
             choices[alias] = building
 
     if not choices:
@@ -67,6 +70,92 @@ def match_building(conn, location):
         return choices[match[0]]
 
     return None
+
+
+def _split_location_parts(text: str) -> list[str]:
+    """Split flyer multi-venue lists like '64 Degrees • Pines • Ventanas'."""
+    if not text:
+        return []
+    # Normalize common separators, then comma-split.
+    normalized = text
+    for sep in ("•", "·", "|", "/", ";", "\n"):
+        normalized = normalized.replace(sep, ",")
+    normalized = normalized.replace(" and ", ",")
+    return [part.strip() for part in normalized.split(",") if part.strip()]
+
+
+def match_buildings_in_text(conn, text, buildings=None, *, bullet_lines_only=False):
+    """
+    Find all known buildings mentioned in a location string or caption.
+    Splits multi-venue lists (• / , / and) and fuzzy-matches each segment.
+    """
+    if not text or not text.strip():
+        return []
+
+    buildings = buildings if buildings is not None else _load_buildings(conn)
+    found: dict[str, dict] = {}
+
+    if bullet_lines_only:
+        lines = [
+            line for line in text.splitlines()
+            if "•" in line or "·" in line
+        ]
+        if not lines:
+            return []
+        parts = []
+        for line in lines:
+            parts.extend(_split_location_parts(line))
+    else:
+        stripped = text.strip()
+        # Single short location from the model — match as a whole first.
+        if len(stripped) <= 60 and "•" not in stripped and "·" not in stripped:
+            matched = match_building(conn, stripped, buildings=buildings)
+            return [matched] if matched else []
+        parts = _split_location_parts(stripped)
+
+    for part in parts:
+        if len(part) > 60:
+            continue
+        matched = match_building(conn, part, buildings=buildings)
+        if not matched:
+            continue
+        # Reject weak fuzzy hits on short/noisy fragments (menus, etc.).
+        labels = [matched["name"], *(matched.get("aliases") or [])]
+        part_l = part.lower()
+        if not any(label.lower() in part_l or part_l in label.lower() for label in labels):
+            continue
+        found[matched["name"]] = matched
+
+    return list(found.values())
+
+
+def resolve_event_buildings(conn, location, caption=""):
+    """
+    Resolve one or more map pins for an extracted event.
+    Multi-venue HDH flyers (e.g. Friendsgiving) list several dining halls.
+    """
+    buildings = _load_buildings(conn)
+    from_location = match_buildings_in_text(
+        conn, location or "", buildings=buildings
+    )
+    if len(from_location) >= 2:
+        return from_location
+
+    # Captions often list venues on a single bulleted line; ignore menu prose.
+    from_caption = match_buildings_in_text(
+        conn,
+        caption or "",
+        buildings=buildings,
+        bullet_lines_only=True,
+    )
+    if len(from_caption) >= 2:
+        return from_caption
+
+    if from_location:
+        return from_location
+
+    single = match_building(conn, location, buildings=buildings)
+    return [single] if single else []
 
 
 def make_timestamp(event_date, event_time):
@@ -146,22 +235,26 @@ def process_post(conn, s3, post):
         if not result.title:
             raise ValueError("Event has no title")
 
-        building = match_building(conn, result.location)
+        matched_buildings = resolve_event_buildings(
+            conn,
+            result.location,
+            caption=post.get("caption") or "",
+        )
         logger.info(
-            "Post %s: AI location=%r, matched building=%r",
+            "Post %s: AI location=%r, matched buildings=%r",
             post_id,
             result.location,
-            building["name"] if building else None,
+            [b["name"] for b in matched_buildings] if matched_buildings else None,
         )
 
-        location_name = (
-            building["name"]
-            if building
-            else result.location
-        )
-
-        lat = building["lat"] if building else None
-        lng = building["lng"] if building else None
+        # One pin per matched venue; fall back to a single unmatched location row.
+        venue_rows = matched_buildings or [
+            {
+                "name": result.location,
+                "lat": None,
+                "lng": None,
+            }
+        ]
 
         start_time = make_timestamp(result.date, result.start)
         end_time = make_timestamp(result.date, result.end)
@@ -172,7 +265,7 @@ def process_post(conn, s3, post):
             result.start,
         )
 
-        # Check whether this event already exists.
+        existing_events = []
         if result.date:
             with conn.cursor() as cur:
                 cur.execute(
@@ -189,65 +282,62 @@ def process_post(conn, s3, post):
                 )
                 existing_events = cur.fetchall()
 
-            candidate = {
-                "title": result.title,
-                "org": result.org,
-                "location_name": location_name,
-                "date": result.date,
-            }
-
-            duplicate = any(
-                are_duplicates(candidate, dict(event))
-                for event in existing_events
-            )
-
-            if duplicate:
-                with conn.cursor() as cur:
-                    cur.execute(
-                        "UPDATE raw_posts SET status = 'processed' WHERE id = %s",
-                        (post_id,),
-                    )
-                conn.commit()
-                logger.info("Duplicate event skipped for post %s", post_id)
-                return "duplicate"
-
+        inserted = 0
+        skipped_dup = 0
         with conn.cursor() as cur:
-            cur.execute(
-                """
-                INSERT INTO events (
-                    raw_post_id,
-                    title,
-                    org,
-                    start_time,
-                    end_time,
-                    location_name,
-                    lat,
-                    lng,
-                    has_food,
-                    food_desc,
-                    dietary,
-                    confidence
+            for building in venue_rows:
+                location_name = building.get("name") or result.location
+                candidate = {
+                    "title": result.title,
+                    "org": result.org,
+                    "location_name": location_name,
+                    "date": result.date,
+                }
+                if result.date and any(
+                    are_duplicates(candidate, dict(event))
+                    for event in existing_events
+                ):
+                    skipped_dup += 1
+                    continue
+
+                cur.execute(
+                    """
+                    INSERT INTO events (
+                        raw_post_id,
+                        title,
+                        org,
+                        start_time,
+                        end_time,
+                        location_name,
+                        lat,
+                        lng,
+                        has_food,
+                        food_desc,
+                        dietary,
+                        confidence
+                    )
+                    VALUES (
+                        %s, %s, %s, %s, %s, %s, %s, %s,
+                        %s, %s, %s, %s
+                    )
+                    """,
+                    (
+                        post_id,
+                        result.title,
+                        result.org,
+                        start_time,
+                        end_time,
+                        location_name,
+                        building.get("lat"),
+                        building.get("lng"),
+                        result.has_food,
+                        result.food,
+                        result.dietary,
+                        confidence,
+                    ),
                 )
-                VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s, %s
-                )
-                """,
-                (
-                    post_id,
-                    result.title,
-                    result.org,
-                    start_time,
-                    end_time,
-                    location_name,
-                    lat,
-                    lng,
-                    result.has_food,
-                    result.food,
-                    result.dietary,
-                    confidence,
-                ),
-            )
+                inserted += 1
+                existing_events.append(candidate)
 
             cur.execute(
                 "UPDATE raw_posts SET status = 'processed' WHERE id = %s",
@@ -256,7 +346,15 @@ def process_post(conn, s3, post):
 
         conn.commit()
 
-        logger.info("Successfully processed post %s", post_id)
+        if inserted == 0 and skipped_dup:
+            logger.info("Duplicate event skipped for post %s", post_id)
+            return "duplicate"
+
+        logger.info(
+            "Successfully processed post %s (%d event row(s))",
+            post_id,
+            inserted,
+        )
         return "processed"
 
     except Exception:
