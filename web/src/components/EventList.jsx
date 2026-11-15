@@ -60,6 +60,7 @@ export default function EventList({
   onShowFlyer,
   onShare,
   onPeekHeight,
+  hiddenCount = 0,
 }) {
   const isSheet = mode === 'sheet'
   const items = useMemo(
@@ -250,6 +251,12 @@ export default function EventList({
                 )}
               </li>
             ))}
+            {hiddenCount > 0 && (
+              <li className="event-list__hidden-note">
+                {hiddenCount} off-campus or unplaced{' '}
+                {hiddenCount === 1 ? 'event' : 'events'} hidden
+              </li>
+            )}
           </>
         )}
 

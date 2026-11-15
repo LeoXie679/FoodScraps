@@ -1,6 +1,8 @@
 // Minimal iCalendar (RFC 5545) export for a single event.
 
-const ONE_HOUR_MS = 60 * 60 * 1000
+// No end_time → 1 hour in calendar files (the app itself assumes 2 hours;
+// see ASSUMED_DURATION_MS in time.js).
+export const CALENDAR_DEFAULT_DURATION_MS = 60 * 60 * 1000
 
 /** 2026-11-15T01:01:07.787Z → 20261115T010107Z */
 function icsDate(date) {
@@ -40,7 +42,7 @@ export function buildIcs(ev, now = new Date()) {
   const start = new Date(ev.start_time)
   const end = ev.end_time
     ? new Date(ev.end_time)
-    : new Date(start.getTime() + ONE_HOUR_MS)
+    : new Date(start.getTime() + CALENDAR_DEFAULT_DURATION_MS)
 
   const description = [
     ev.food_desc && `Food: ${ev.food_desc}`,

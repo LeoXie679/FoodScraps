@@ -113,6 +113,13 @@
   padding-top: 8px;
 }
 
+.event-list__hidden-note {
+  padding: 10px 6px 4px;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
 /* ---- Items ---- */
 .event-list__empty {
   padding: 12px 6px;

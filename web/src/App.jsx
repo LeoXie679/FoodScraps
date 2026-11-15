@@ -18,6 +18,7 @@ import { eventMatches, isDietFilter, leftoverMatches } from './lib/filters.js'
 import { withMapOffsets } from './lib/spread.js'
 import { computeWeather } from './lib/weather.js'
 import { buildFeed } from './lib/feed.js'
+import { applyVisibility } from './lib/visibility.js'
 import { useNow } from './hooks/useNow.js'
 import { useMediaQuery } from './hooks/useMediaQuery.js'
 import { useLiveData } from './hooks/useLiveData.js'
@@ -62,9 +63,20 @@ export default function App() {
   const [showAdmin, setShowAdmin] = useState(false)
   const closeAdmin = useCallback(() => setShowAdmin(false), [])
 
-  const { events, leftovers, setLeftovers, detectedAt, refresh } = useLiveData({
-    onError: setToast,
-  })
+  const {
+    events: rawEvents,
+    leftovers: rawLeftovers,
+    setLeftovers,
+    detectedAt,
+    refresh,
+  } = useLiveData({ onError: setToast })
+
+  // On-campus + freshness rules, applied once: everything below (map, list,
+  // wheel, feed, weather, counts) only ever sees what passes.
+  const { events, leftovers, locationHidden } = useMemo(
+    () => applyVisibility(rawEvents, rawLeftovers, now),
+    [rawEvents, rawLeftovers, now],
+  )
 
   const markers = useRef({})
   const sheetPeek = useRef(0)
@@ -214,6 +226,7 @@ export default function App() {
       onShowFlyer={setFlyerEvent}
       onShare={handleShare}
       onPeekHeight={handlePeekHeight}
+      hiddenCount={locationHidden}
     />
   )
 

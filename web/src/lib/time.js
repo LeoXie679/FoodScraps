@@ -18,7 +18,10 @@ export function formatTimeRange(start, end) {
   return end ? `${day} – ${formatClock(new Date(end))}` : day
 }
 
-const ASSUMED_DURATION_MS = 2 * 60 * 60 * 1000
+// Events with no end_time are treated as 2 hours long everywhere in the app
+// (badges, filters, wheel, weather, staleness). Calendar files use 1 hour
+// instead (see CALENDAR_DEFAULT_DURATION_MS in ics.js).
+export const ASSUMED_DURATION_MS = 2 * 60 * 60 * 1000
 
 /** Start/end as Dates. No end → start + 2h. No start → both null. */
 export function eventTimes(ev) {
