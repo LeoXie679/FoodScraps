@@ -1,0 +1,130 @@
+.event-list {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+/* ---- Mobile bottom sheet ---- */
+.event-list--sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 75%;
+  z-index: 1050; /* above Leaflet controls (1000), below the post panel */
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.2);
+  will-change: transform;
+}
+
+.event-list__header {
+  padding: 10px 14px 8px;
+  flex-shrink: 0;
+}
+
+.event-list__header--drag {
+  cursor: grab;
+  touch-action: none; /* let us handle the drag instead of the browser */
+  user-select: none;
+}
+
+.event-list__handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: #c4c7c5;
+  margin: 0 auto 8px;
+}
+
+.event-list__items {
+  position: relative; /* so item offsetTop is measured from the list */
+  list-style: none;
+  margin: 0;
+  padding: 0 8px 8px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.event-list--sheet:not(.is-expanded) .event-list__items {
+  overflow-y: hidden;
+}
+
+/* ---- Desktop sidebar ---- */
+.event-list--sidebar {
+  width: 340px;
+  flex-shrink: 0;
+  border-right: 1px solid #ddd;
+  min-height: 0;
+}
+
+.event-list--sidebar .event-list__header {
+  border-bottom: 1px solid #eee;
+}
+
+.event-list--sidebar .event-list__items {
+  padding-top: 8px;
+}
+
+/* ---- Items ---- */
+.event-list__empty {
+  padding: 12px 6px;
+  color: #5f6368;
+}
+
+.event-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  width: 100%;
+  padding: 8px 6px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.event-item:hover,
+.event-item:focus-visible {
+  background: #f1f3f4;
+}
+
+.event-item--ended {
+  opacity: 0.55;
+}
+
+.event-item__emoji {
+  font-size: 26px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.event-item__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.event-item__title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-item__location {
+  color: #5f6368;
+  font-size: 0.88rem;
+}
+
+.event-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}

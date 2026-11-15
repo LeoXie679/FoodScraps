@@ -1,0 +1,38 @@
+.time-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.time-badge--now,
+.time-badge--leftover {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.time-badge--soon {
+  background: #fef7e0;
+  color: #b06000;
+}
+
+.time-badge--later {
+  background: #e8f0fe;
+  color: #1967d2;
+}
+
+.time-badge--ended {
+  background: #f1f3f4;
+  color: #5f6368;
+}
+
+.diet-tag {
+  display: inline-block;
+  background: #f1f3f4;
+  color: #3c4043;
+  border-radius: 8px;
+  padding: 1px 6px;
+  font-size: 0.75rem;
+}
