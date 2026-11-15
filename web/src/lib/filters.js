@@ -1,6 +1,7 @@
 import { eventTimes, isSameDay } from './time.js'
 
-export const FILTERS = ['all', 'now', 'today', 'vegetarian', 'halal']
+// Vegetarian / halal chips hidden for now — no events carry those dietary tags yet.
+export const FILTERS = ['all', 'now', 'today' /*, 'vegetarian', 'halal' */]
 
 export function isDietFilter(filter) {
   return filter === 'vegetarian' || filter === 'halal'
