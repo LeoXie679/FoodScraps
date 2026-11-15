@@ -15,7 +15,7 @@ export default function Header({
   return (
     <header className="header">
       <div className="header__brand">
-        <h1 className="header__title">Free Food Radar</h1>
+        <h1 className="header__title">Grub Radar</h1>
         <FoodWeather weather={weather} />
       </div>
       <nav className="header__filters">
