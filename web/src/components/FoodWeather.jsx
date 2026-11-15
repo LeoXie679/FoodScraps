@@ -26,7 +26,8 @@ export default function FoodWeather({ weather }) {
         aria-label={`Food weather: ${weather.label}. Show forecast`}
       >
         <span aria-hidden="true">{weather.icon}</span>
-        <span>{weather.label}</span>
+        {/* Hidden on phones (icon only); the aria-label still says it. */}
+        <span className="food-weather__label">{weather.label}</span>
       </button>
       {open && (
         <div className="food-weather__forecast" role="status">

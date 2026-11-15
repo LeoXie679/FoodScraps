@@ -49,8 +49,18 @@ export default function Header({
           {/* Label hides below 1100px; the 🎰 stays. */}
           <span className="btn__label">I’m hungry </span>🎰
         </button>
-        <button onClick={onTogglePost} className="btn btn--green">
-          Post leftovers
+        <button
+          type="button"
+          onClick={onTogglePost}
+          className="btn btn--green btn--post"
+          aria-label="Post leftovers"
+          title="Post leftovers"
+        >
+          {/* Phones show just "+". */}
+          <span className="btn--post__plus" aria-hidden="true">
+            +
+          </span>
+          <span className="btn--post__label">Post leftovers</span>
         </button>
       </div>
     </header>

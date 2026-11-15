@@ -78,6 +78,80 @@
   }
 }
 
+.btn--post__plus {
+  display: none;
+}
+
+/* Phones (<600px): compact two-row header (~70px + ticker).
+   Row 1: title, weather icon, icon buttons. Row 2: scrollable filter chips. */
+@media (max-width: 599px) {
+  .header {
+    gap: 6px 8px;
+    padding: 6px 10px;
+  }
+  .header__brand {
+    order: 1;
+    flex: 1;
+    min-width: 0;
+    gap: 6px;
+  }
+  .header__title {
+    font-size: 1.02rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header__actions {
+    order: 2;
+    gap: 6px;
+  }
+  .header__actions .btn {
+    width: 32px;
+    min-height: 32px;
+    padding: 0;
+  }
+  .btn--post__label {
+    display: none;
+  }
+  .btn--post__plus {
+    display: inline;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .header__filters {
+    order: 3;
+    flex: 1 0 100%;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    padding-right: 24px; /* last chip can scroll clear of the fade */
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+  .header__filters::-webkit-scrollbar {
+    display: none;
+  }
+  .header .chip {
+    flex-shrink: 0;
+    padding: 3px 11px;
+    min-height: 28px;
+    font-size: 0.82rem;
+  }
+  .food-weather__label {
+    display: none;
+  }
+  .food-weather__badge {
+    padding: 3px 7px;
+    min-height: 28px;
+  }
+  .ticker {
+    min-height: 26px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+  }
+}
+
 /* 900px+: keep the header on one line with smaller filter chips. */
 @media (min-width: 900px) {
   .header {
