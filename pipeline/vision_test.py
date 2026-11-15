@@ -74,7 +74,7 @@ def extract_flyer(image_path, caption=""):
                 ]
             }
         ],
-        "max_output_tokens": 1000,
+        "max_output_tokens": 4000,
         "temperature": 0.1
     }
 
@@ -94,6 +94,8 @@ def extract_flyer(image_path, caption=""):
         )
 
     result = response.json()
+    print("\nFULL API RESPONSE:")
+    print(json.dumps(result, indent=2))
 
     print("\nMODEL:", result.get("model"))
     print("\nEXTRACTED RESPONSE:")

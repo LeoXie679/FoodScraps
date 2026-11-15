@@ -15,18 +15,24 @@ MODEL = "nemotron-3-nano-omni-30b-a3b-reasoning"
 API_URL = "https://api.vultrinference.com/v1/responses"
 
 
-def extract_event(image_path, caption=""):
+
+
+def extract_event(image_input, caption="", mime_type=None):
     if not API_KEY:
         raise ValueError("VULTR_INFERENCE_API_KEY is missing from .env")
 
-    image_path = Path(image_path)
+    if isinstance(image_input, (bytes, bytearray)):
+        image_data = base64.b64encode(image_input).decode("utf-8")
+        mime_type = mime_type or "image/jpeg"
+    else:
+        image_path = Path(image_input)
 
-    if not image_path.exists():
-        raise FileNotFoundError(f"Image not found: {image_path}")
+        if not image_path.exists():
+            raise FileNotFoundError(f"Image not found: {image_path}")
 
-    mime_type = mimetypes.guess_type(image_path)[0] or "image/jpeg"
+        mime_type = mime_type or mimetypes.guess_type(image_path)[0] or "image/jpeg"
+        image_data = base64.b64encode(image_path.read_bytes()).decode("utf-8")
 
-    image_data = base64.b64encode(image_path.read_bytes()).decode("utf-8")
     image_uri = f"data:{mime_type};base64,{image_data}"
 
     prompt = f"""
@@ -49,12 +55,18 @@ Return ONLY one valid JSON object with exactly these fields:
   "extraction_confidence": 0.0
 }}
 
+
 Rules:
-- Never invent a date, time, or location.
+- Copy the event title exactly as written on the flyer. Do not paraphrase, shorten, or rename it.
+- has_food is true ONLY if the flyer or caption explicitly mentions food, meals, snacks, refreshments, or specific food items being offered.
+- Do not assume an event has food because it is a social, cultural, career, or campus event.
+- If food is not explicitly mentioned, set has_food to false and food to null.
+- Reject non-food events by setting is_event to false when no food is explicitly mentioned.
+- Only list dietary restrictions or labels explicitly stated on the flyer or caption. Otherwise return [].
+- Never invent dates, times, locations, organizations, food descriptions, or dietary information.
 - Use null for unknown information.
-- has_food is true only when free food is offered.
+- Preserve the exact event date and time shown on the flyer.
 - Confidence must be between 0 and 1.
-- Use an empty dietary list if none is visible.
 - Return JSON only. No markdown or explanations.
 """
 
